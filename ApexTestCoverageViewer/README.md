@@ -50,7 +50,7 @@ It accepts data from Salesforce Tooling API (or any exported file) and renders i
 ```json
 [
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-  {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446}
+  {"ApexClassOrTrigger.Name":"AccountUtils","NumLinesCovered":92,"NumLinesUncovered":446}
 ]
 ```
 
@@ -59,7 +59,7 @@ It accepts data from Salesforce Tooling API (or any exported file) and renders i
 ```csv
 ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
 AccountTrigger,5,1
-ATL_Utils,92,446
+AccountUtils,92,446
 ```
 
 ### TSV
@@ -67,7 +67,7 @@ ATL_Utils,92,446
 ```tsv
 ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
-ATL_Utils	92	446
+AccountUtils	92	446
 ```
 
 ---
@@ -98,7 +98,4 @@ ATL_Utils	92	446
 
 MIT — use, fork, and break it freely. Just remember: if your coverage is 2%, the problem isn’t this tool.
 
-```
-
-Do you want me to also update the **HTML code** itself so it can auto-detect TSV/CSV and parse it correctly, or just keep the README at this point?
 ```
