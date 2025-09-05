@@ -34,6 +34,18 @@ Cole os dados de saída em JSON (com `ApexClassOrTrigger.Name`, `NumLinesCovered
 
 ---
 
+## Query com Tooling API
+
+```SQL
+    SELECT 
+        ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered 
+    FROM ApexCodeCoverageAggregate 
+    ORDER BY 
+        ApexClassOrTrigger.Name 
+    ASC
+
+````
+
 ## 📦 Exemplo de entrada
 
 ```json
