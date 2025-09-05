@@ -61,7 +61,13 @@
             <button id="btnSample" class="ghost">Exemplo</button>
             <span class="muted small">Campos esperados: <code class="k">ApexClassOrTrigger.Name</code>, <code class="k">NumLinesCovered</code>, <code class="k">NumLinesUncovered</code></span>
           </div>
-          <textarea id="inputJson" placeholder='Cole aqui um JSON como:
+          <textarea id="inputJson" placeholder='
+Faca o Select na tabela de cobertura do Salesforce:
+[
+    SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate ORDER BY ApexClassOrTrigger.Name ASC
+]          
+!Nao esqueca de selecionar o Tooling API antes de executar o query.          
+Cole aqui um JSON como:
 [
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
   {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446}
