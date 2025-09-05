@@ -78,18 +78,18 @@
 JSON example:
 [
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-  {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446}
+  {"ApexClassOrTrigger.Name":"AccoutController","NumLinesCovered":92,"NumLinesUncovered":446}
 ]
 
 CSV example:
 ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
 AccountTrigger,5,1
-ATL_Utils,92,446
+AccoutController,92,446
 
 TSV example:
 ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
-ATL_Utils	92	446'></textarea>
+AccoutController	92	446'></textarea>
           </div>
 
           <!-- API mode -->
@@ -367,10 +367,8 @@ ATL_Utils	92	446'></textarea>
     $('#btnSample').addEventListener('click', ()=>{
       const sample = [
         {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-        {"ApexClassOrTrigger.Name":"ATL_AvayaConnectorController","NumLinesCovered":137,"NumLinesUncovered":16},
-        {"ApexClassOrTrigger.Name":"ATL_AutosservicoGetInvalidAsset","NumLinesCovered":31,"NumLinesUncovered":11},
-        {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446},
-        {"ApexClassOrTrigger.Name":"BusinessHoursUtil","NumLinesCovered":39,"NumLinesUncovered":1},
+        {"ApexClassOrTrigger.Name":"AccountController","NumLinesCovered":137,"NumLinesUncovered":16},
+        {"ApexClassOrTrigger.Name":"Accounthelper","NumLinesCovered":31,"NumLinesUncovered":11},
         {"ApexClassOrTrigger.Name":"TriggerHandler","NumLinesCovered":44,"NumLinesUncovered":59}
       ];
       $('#inputRaw').value = JSON.stringify(sample, null, 2);
