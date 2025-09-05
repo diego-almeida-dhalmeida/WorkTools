@@ -18,6 +18,8 @@
     .card header h2{margin:0;font-size:15px}
     .card .body{padding:12px 14px}
     textarea{width:100%;min-height:180px;resize:vertical;background:#0b0d12;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    pre{background:#0b0f18;border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
     .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
     input[type="text"], input[type="url"], input[type="number"], input[type="password"]{flex:1 1 220px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0b0d12;color:var(--text)}
     button{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#101626;color:var(--text);cursor:pointer}
@@ -48,6 +50,8 @@
     code.k{background:#0b0f18;border:1px solid var(--border);padding:1px 6px;border-radius:6px}
     .warn{color:#ffd479}
     .api-box{border:1px dashed var(--border);border-radius:10px;padding:10px;background:#0b0f18}
+    details.examples summary{cursor:pointer;user-select:none}
+    .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
   </style>
 </head>
 <body>
@@ -74,22 +78,53 @@
               <button id="btnSample" class="ghost">Sample</button>
               <span class="muted small">Expected fields: <code class="k">ApexClassOrTrigger.Name</code>, <code class="k">NumLinesCovered</code>, <code class="k">NumLinesUncovered</code></span>
             </div>
-            <textarea id="inputRaw" placeholder='Paste JSON, CSV, or TSV here.
-JSON example:
-[
+            <textarea id="inputRaw" placeholder='Paste JSON, CSV, or TSV here.'></textarea>
+
+            <!-- Examples block with Tooling API SOQL -->
+            <details class="examples" style="margin-top:10px">
+              <summary>Input examples and Tooling API SOQL</summary>
+
+              <div class="example-bar">
+                <strong>JSON</strong>
+                <button class="ghost" data-copy="#ex-json">Copy</button>
+                <button class="ghost" data-fill="#ex-json">Fill textarea</button>
+              </div>
+              <pre id="ex-json"><code>[
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-  {"ApexClassOrTrigger.Name":"AccoutController","NumLinesCovered":92,"NumLinesUncovered":446}
-]
+  {"ApexClassOrTrigger.Name":"AccountUtils","NumLinesCovered":92,"NumLinesUncovered":446}
+]</code></pre>
 
-CSV example:
-ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
+              <div class="example-bar">
+                <strong>CSV</strong>
+                <button class="ghost" data-copy="#ex-csv">Copy</button>
+                <button class="ghost" data-fill="#ex-csv">Fill textarea</button>
+              </div>
+              <pre id="ex-csv"><code>ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
 AccountTrigger,5,1
-AccoutController,92,446
+AccountUtils,92,446</code></pre>
 
-TSV example:
-ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
+              <div class="example-bar">
+                <strong>TSV</strong>
+                <button class="ghost" data-copy="#ex-tsv">Copy</button>
+                <button class="ghost" data-fill="#ex-tsv">Fill textarea</button>
+              </div>
+              <pre id="ex-tsv"><code>ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
-AccoutController	92	446'></textarea>
+AccountUtils	92	446</code></pre>
+
+              <div class="example-bar">
+                <strong>Tooling API SOQL</strong>
+                <button class="ghost" data-copy="#ex-soql">Copy</button>
+              </div>
+              <pre id="ex-soql"><code>SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
+FROM ApexCodeCoverageAggregate</code></pre>
+
+              <div class="hint">
+                <span class="warn">Important:</span> run the SOQL in **Tooling API** context and paste the exported result (JSON/CSV/TSV) above,
+                or switch to the Tooling API mode and provide a valid token. Example CLI:
+                <code class="k">sfdx force:data:soql:query -t -q "SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" --json</code>
+              </div>
+            </details>
           </div>
 
           <!-- API mode -->
@@ -180,12 +215,26 @@ AccoutController	92	446'></textarea>
     const mainBody = $('#mainTable tbody');
     const refinedBody = $('#refinedTable tbody');
 
-    // UI mode switching
+    // Mode switching
     $('#source').addEventListener('change', (e)=>{
       const mode = e.target.value;
       $('#pasteBox').style.display = mode==='paste' ? '' : 'none';
       $('#apiBox').style.display = mode==='api' ? '' : 'none';
       $('#err').textContent = '';
+    });
+
+    // Examples: copy/fill
+    document.addEventListener('click', (e)=>{
+      const copySel = e.target.getAttribute('data-copy');
+      const fillSel = e.target.getAttribute('data-fill');
+      if(copySel){
+        const text = document.querySelector(copySel)?.innerText ?? '';
+        navigator.clipboard.writeText(text).catch(()=>{});
+      }
+      if(fillSel){
+        const text = document.querySelector(fillSel)?.innerText ?? '';
+        $('#inputRaw').value = text;
+      }
     });
 
     // Helpers
@@ -210,12 +259,11 @@ AccoutController	92	446'></textarea>
       }).filter(x => x.name !== "");
     }
 
-    // Format detection and parsing
+    // Detect & parse
     function detectFormat(text){
       const t = text.trim();
       if(!t) return 'empty';
       if(t.startsWith('[') || t.startsWith('{')) return 'json';
-      // quick heuristics
       if(t.includes('\t')) return 'tsv';
       if(t.includes(',')) return 'csv';
       return 'unknown';
@@ -226,7 +274,7 @@ AccoutController	92	446'></textarea>
       if(fmt==='json'){
         const data = JSON.parse(text);
         if(Array.isArray(data)) return normalizeObjects(data);
-        if(data && Array.isArray(data.records)) return normalizeObjects(data.records); // sfdx --json style
+        if(data && Array.isArray(data.records)) return normalizeObjects(data.records);
         throw new Error('JSON must be an array or have a "records" array.');
       } else if(fmt==='csv'){
         const arr = parseCSV(text, ',');
@@ -255,7 +303,7 @@ AccoutController	92	446'></textarea>
       return out;
     }
 
-    // Minimal CSV/TSV parser with quotes support
+    // Minimal CSV/TSV parser
     function parseCSV(text, sep=','){
       const rows = [];
       let cur = [], val = '', inQuotes = false;
@@ -266,30 +314,21 @@ AccoutController	92	446'></textarea>
         if(inQuotes){
           if(ch === '"'){
             if(nxt === '"'){ val += '"'; i++; } else { inQuotes = false; }
-          } else {
-            val += ch;
-          }
+          } else { val += ch; }
         } else {
           if(ch === '"'){ inQuotes = true; }
           else if(ch === sep){ pushCell(); }
-          else if(ch === '\n'){
-            pushCell(); pushRow();
-          } else if(ch === '\r'){
-            // swallow CR, handle CRLF by ignoring here
-          } else {
-            val += ch;
-          }
+          else if(ch === '\n'){ pushCell(); pushRow(); }
+          else if(ch === '\r'){ /* ignore CR */ }
+          else { val += ch; }
         }
       }
-      // flush last cell/row
       pushCell(); if(cur.length>1 || rows.length===0) pushRow();
-      // drop potential trailing empty line
       return rows.filter(r => r.some(c => String(c).trim()!==''));
     }
 
-    // Rendering
+    // Render
     function renderTable(){
-      const mainBody = $('#mainTable tbody');
       mainBody.innerHTML = '';
       const term = $('#search').value.trim().toLowerCase();
       filteredIdx = [];
@@ -367,8 +406,10 @@ AccoutController	92	446'></textarea>
     $('#btnSample').addEventListener('click', ()=>{
       const sample = [
         {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-        {"ApexClassOrTrigger.Name":"AccountController","NumLinesCovered":137,"NumLinesUncovered":16},
-        {"ApexClassOrTrigger.Name":"Accounthelper","NumLinesCovered":31,"NumLinesUncovered":11},
+        {"ApexClassOrTrigger.Name":"ATL_AvayaConnectorController","NumLinesCovered":137,"NumLinesUncovered":16},
+        {"ApexClassOrTrigger.Name":"ATL_AutosservicoGetInvalidAsset","NumLinesCovered":31,"NumLinesUncovered":11},
+        {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446},
+        {"ApexClassOrTrigger.Name":"BusinessHoursUtil","NumLinesCovered":39,"NumLinesUncovered":1},
         {"ApexClassOrTrigger.Name":"TriggerHandler","NumLinesCovered":44,"NumLinesUncovered":59}
       ];
       $('#inputRaw').value = JSON.stringify(sample, null, 2);
@@ -384,9 +425,7 @@ AccoutController	92	446'></textarea>
         throw new Error('Instance URL, API Version, Access Token and SOQL are required.');
       }
       const url = `${base}/services/data/v${encodeURIComponent(v)}/tooling/query/?q=${encodeURIComponent(soql)}`;
-      const res = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
       if(!res.ok){
         const t = await res.text().catch(()=> '');
         throw new Error(`HTTP ${res.status} ${res.statusText} • ${t.slice(0,300)}`);

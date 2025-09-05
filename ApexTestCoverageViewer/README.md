@@ -21,24 +21,18 @@ It accepts data from Salesforce Tooling API (or any exported file) and renders i
   - Calculates totals and average coverage for the selected subset.
   - Export refined results to **CSV**.
 - **Modern UI** with dark theme, no external dependencies.
-- **Tooling API integration** (manual):  
-  The exact SOQL query you need is:
-  ```sql
-  SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
-  FROM ApexCodeCoverageAggregate
-````
-
-> ⚠️ Authentication and execution of this query must be done outside the tool (e.g., with `sfdx force:data:soql:query -t -q "..." --json`).
-> Paste the exported JSON/CSV/TSV into the textarea.
+- **Tooling API integration**: requires running a SOQL query manually or with a token.
 
 ---
 
 ## 🚀 How to Use
 
-1. Download or clone this repository or access the link https://diego-almeida-dhalmeida.github.io/WorkTools/ApexTestCoverageViewer/index.html.
+1. Download or clone this repository or access the link:  
+   [Apex Test Coverage Viewer (GitHub Pages)](https://diego-almeida-dhalmeida.github.io/WorkTools/ApexTestCoverageViewer/index.html)
 2. Open [`coverage.html`](coverage.html) in your browser.
-3. Paste your data (JSON, CSV, or TSV) into the **Input** textarea.
-4. Click **Load Data**.
+3. Choose the input mode (**Paste** or **Tooling API**).
+4. If using **Paste** mode: paste your data (JSON, CSV, or TSV) into the textarea and click **Load Data**.  
+   If using **Tooling API** mode: provide Instance URL, API Version, Access Token and run the SOQL query.
 5. Use the search and checkboxes to refine the selection.
 
 ---
@@ -52,7 +46,7 @@ It accepts data from Salesforce Tooling API (or any exported file) and renders i
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
   {"ApexClassOrTrigger.Name":"AccountUtils","NumLinesCovered":92,"NumLinesUncovered":446}
 ]
-```
+````
 
 ### CSV
 
@@ -69,6 +63,17 @@ ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
 AccountUtils	92	446
 ```
+
+### Tooling API SOQL
+
+```sql
+SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
+FROM ApexCodeCoverageAggregate
+```
+
+> ⚠️ Authentication and execution of this query must be done outside the tool
+> (e.g., with `sfdx force:data:soql:query -t -q "..." --json`).
+> Copy the exported JSON/CSV/TSV into the textarea, or use the Tooling API input fields with a valid token.
 
 ---
 
