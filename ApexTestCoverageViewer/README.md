@@ -43,9 +43,10 @@ It accepts data from Salesforce Tooling API (or any exported file) and renders i
 
 ```json
 [
-  {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-  {"ApexClassOrTrigger.Name":"AccountUtils","NumLinesCovered":92,"NumLinesUncovered":446}
+  { "ApexClassOrTrigger.Name": "AccountTrigger", "NumLinesCovered": 5, "NumLinesUncovered": 1 },
+  { "ApexClassOrTrigger.Name": "AccountUtils", "NumLinesCovered": 92, "NumLinesUncovered": 446 }
 ]
+```
 ````
 
 ### CSV
@@ -79,28 +80,30 @@ FROM ApexCodeCoverageAggregate
 
 ## 📊 Output
 
-* Each row shows:
+- Each row shows:
+  - Class/Trigger name
+  - Covered lines
+  - Uncovered lines
+  - Coverage percentage
 
-  * Class/Trigger name
-  * Covered lines
-  * Uncovered lines
-  * Coverage percentage
-* **>= 80% coverage → green**
-* **< 80% coverage → red**
+- **>= 80% coverage → green**
+- **< 80% coverage → red**
 
 ---
 
 ## 🔧 Roadmap
 
-* [ ] Direct login and query execution with Salesforce Tooling API.
-* [ ] Filters by coverage percentage ranges.
-* [ ] Visual charts (bar/pie).
-* [ ] File upload instead of paste-only.
+- [ ] Direct login and query execution with Salesforce Tooling API.
+- [ ] Filters by coverage percentage ranges.
+- [ ] Visual charts (bar/pie).
+- [ ] File upload instead of paste-only.
 
 ---
 
 ## 📝 License
 
 MIT — use, fork, and break it freely. Just remember: if your coverage is 2%, the problem isn’t this tool.
+
+```
 
 ```

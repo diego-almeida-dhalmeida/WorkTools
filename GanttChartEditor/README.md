@@ -7,6 +7,7 @@ A lightweight and interactive Gantt chart editor built using **HTML**, **JavaScr
 ## 🚀 Features
 
 ### ✅ Task Management
+
 - Add, edit, and delete tasks
 - Each task supports:
   - **Description**
@@ -14,21 +15,25 @@ A lightweight and interactive Gantt chart editor built using **HTML**, **JavaScr
   - **Number of periods** (1–60 blocks = 30 business days)
 
 ### 📅 Calendar Visualization
+
 - Tasks are auto-allocated across business days in **morning (09:00–12:00)** and **afternoon (13:00–16:00)**
 - **No overlap** allowed: periods are skipped if occupied
 - **Headers rotate** vertically when >5 columns
 - Maximum: **60 blocks** shown (30 days)
 
 ### 🎨 Color Logic
+
 - Users choose from 20 predefined **pastel colors** by name (e.g. "Azul Pastel", "Verde Pastel")
 - Colors in use are **removed from the picker** and only reappear if the task is deleted or changed
 
 ### 🧠 Smart UI
+
 - Press **ENTER** to quickly add a task with 1 period and next available color
 - Press **ESC** or click ❌ to cancel editing
 - Form switches between **"Include"** and **"Edit"** modes visually and functionally
 
 ### 💾 Data Handling
+
 - **Export** all tasks as a `.json` file
 - **Import** from `.json` file to restore planning state
 - Tasks with predefined agendas are preserved
@@ -59,6 +64,7 @@ A lightweight and interactive Gantt chart editor built using **HTML**, **JavaScr
 ## 📤 Export / Import
 
 Use the buttons:
+
 - **Exportar JSON** → Download a `.json` of all tasks
 - **Importar JSON** → Load an existing `.json` file and repopulate the chart
 
@@ -66,16 +72,17 @@ Use the buttons:
 
 ## 📌 Example Use Cases
 
-- Internal QA test planning  
-- Academic weekly study planners  
-- Sprint preparation for task allocation  
-- Manual support call routing diagrams  
+- Internal QA test planning
+- Academic weekly study planners
+- Sprint preparation for task allocation
+- Manual support call routing diagrams
 
 ---
 
 ## 🛠 Roadmap Ideas
 
 Want to extend the tool? Here are some ideas:
+
 - Export to PDF / Excel
 - Support for half-hour or hourly periods
 - Login support with localStorage or Firebase

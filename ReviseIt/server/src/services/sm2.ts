@@ -1,6 +1,6 @@
 export type SM2State = {
-  ef: number;     // Easiness Factor
-  reps: number;   // Repetition count
+  ef: number; // Easiness Factor
+  reps: number; // Repetition count
   interval: number; // in days
 };
 

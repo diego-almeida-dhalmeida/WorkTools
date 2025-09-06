@@ -8,7 +8,7 @@ export async function scheduleNextFromReview(prisma: PrismaClient, itemId: strin
   const state = {
     ef: item.ef ?? 2.5,
     reps: item.reps ?? 0,
-    interval: item.intervalDays ?? 0
+    interval: item.intervalDays ?? 0,
   };
 
   const next = sm2Next(state, grade);
@@ -17,7 +17,7 @@ export async function scheduleNextFromReview(prisma: PrismaClient, itemId: strin
 
   const updated = await prisma.item.update({
     where: { id: itemId },
-    data: { ef: next.ef, reps: next.reps, intervalDays: next.interval, dueDate: due }
+    data: { ef: next.ef, reps: next.reps, intervalDays: next.interval, dueDate: due },
   });
 
   return updated;

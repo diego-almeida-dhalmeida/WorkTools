@@ -20,17 +20,21 @@ app.post('/decks', async (req, res) => {
   const schema = z.object({
     userEmail: z.string().email(),
     name: z.string().min(1),
-    goalMins: z.number().int().min(10).max(180).optional()
+    goalMins: z.number().int().min(10).max(180).optional(),
   });
 
   const data = schema.parse(req.body);
 
   let user = await prisma.user.findUnique({ where: { email: data.userEmail } });
   if (!user) {
-    user = await prisma.user.create({ data: { email: data.userEmail, tz: process.env.DEFAULT_TZ || 'America/Sao_Paulo' } });
+    user = await prisma.user.create({
+      data: { email: data.userEmail, tz: process.env.DEFAULT_TZ || 'America/Sao_Paulo' },
+    });
   }
 
-  const deck = await prisma.deck.create({ data: { userId: user.id, name: data.name, goalMins: data.goalMins ?? 25 } });
+  const deck = await prisma.deck.create({
+    data: { userId: user.id, name: data.name, goalMins: data.goalMins ?? 25 },
+  });
   res.json(deck);
 });
 
@@ -40,7 +44,7 @@ app.post('/items', async (req, res) => {
     deckId: z.string().min(1),
     title: z.string().min(1),
     url: z.string().url().optional(),
-    notes: z.string().optional()
+    notes: z.string().optional(),
   });
   const data = schema.parse(req.body);
 
@@ -55,7 +59,7 @@ app.post('/reviews', async (req, res) => {
     itemId: z.string().min(1),
     grade: z.number().int().min(0).max(5),
     durationMin: z.number().int().min(5).max(180).optional(),
-    pushCalendar: z.boolean().optional()
+    pushCalendar: z.boolean().optional(),
   });
   const data = schema.parse(req.body);
 
@@ -63,7 +67,12 @@ app.post('/reviews', async (req, res) => {
   if (!user) return res.status(404).json({ error: 'user not found' });
 
   const review = await prisma.review.create({
-    data: { userId: user.id, itemId: data.itemId, grade: data.grade, durationMin: data.durationMin ?? 25 }
+    data: {
+      userId: user.id,
+      itemId: data.itemId,
+      grade: data.grade,
+      durationMin: data.durationMin ?? 25,
+    },
   });
 
   const updatedItem = await scheduleNextFromReview(prisma, data.itemId, data.grade);
@@ -75,20 +84,25 @@ app.post('/reviews', async (req, res) => {
       title: updatedItem.title,
       dueDate: updatedItem.dueDate!,
       durationMin: data.durationMin ?? 25,
-      tz: user.tz
+      tz: user.tz,
     });
   }
 
-  res.json({ review, next: { dueDate: updatedItem.dueDate, intervalDays: updatedItem.intervalDays } });
+  res.json({
+    review,
+    next: { dueDate: updatedItem.dueDate, intervalDays: updatedItem.intervalDays },
+  });
 });
 
 // List items due today
 app.get('/due', async (req, res) => {
-  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-  const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
   const items = await prisma.item.findMany({
     where: { dueDate: { gte: todayStart, lte: todayEnd } },
-    orderBy: { dueDate: 'asc' }
+    orderBy: { dueDate: 'asc' },
   });
   res.json(items);
 });
