@@ -1,423 +1,171 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Apex Test Coverage Viewer</title>
-    <style>
-      :root {
-        --bg: #0f1115;
-        --panel: #151821;
-        --muted: #9aa4b2;
-        --text: #e8ecf1;
-        --accent: #4aa3ff;
-        --danger: #ff5b5b;
-        --ok: #2fd47a;
-        --border: #242939;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        background: var(--bg);
-        color: var(--text);
-        font:
-          14px/1.4 system-ui,
-          Segoe UI,
-          Roboto,
-          Ubuntu,
-          'Helvetica Neue',
-          Arial;
-      }
-      h1 {
-        font-size: 18px;
-        margin: 12px 0;
-      }
-      .wrap {
-        max-width: 1200px;
-        margin: 24px auto;
-        padding: 0 16px;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: 1.2fr 2fr;
-        gap: 16px;
-      }
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);
-      }
-      .card header {
-        padding: 12px 14px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .card header h2 {
-        margin: 0;
-        font-size: 15px;
-      }
-      .card .body {
-        padding: 12px 14px;
-      }
-      textarea {
-        width: 100%;
-        min-height: 180px;
-        resize: vertical;
-        background: #0b0d12;
-        color: var(--text);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      }
-      pre {
-        background: #0b0f18;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px;
-        overflow: auto;
-      }
-      code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      }
-      .row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-        margin: 10px 0;
-      }
-      input[type='text'],
-      input[type='url'],
-      input[type='number'],
-      input[type='password'] {
-        flex: 1 1 220px;
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: #0b0d12;
-        color: var(--text);
-      }
-      button {
-        padding: 8px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: #101626;
-        color: var(--text);
-        cursor: pointer;
-      }
-      button.primary {
-        background: linear-gradient(180deg, #1a66ff, #1247b8);
-        border-color: #0f2f7a;
-      }
-      button.ghost {
-        background: #101318;
-      }
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-      select {
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: #0b0d12;
-        color: var(--text);
-      }
-      table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 8px;
-      }
-      thead th {
-        font-size: 12px;
-        color: var(--muted);
-        text-align: left;
-        padding: 6px 10px;
-      }
-      tbody tr {
-        background: #0b0f18;
-        border: 1px solid var(--border);
-        transition: transform 0.06s ease;
-      }
-      tbody tr:hover {
-        transform: translateY(-1px);
-      }
-      td {
-        padding: 10px;
-      }
-      .num {
-        font-variant-numeric: tabular-nums;
-        text-align: right;
-      }
-      .badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        border: 1px solid var(--border);
-        background: #0f1320;
-      }
-      .pct-ok .badge {
-        background: rgba(47, 212, 122, 0.12);
-        border-color: rgba(47, 212, 122, 0.35);
-        color: var(--ok);
-      }
-      .pct-bad {
-        outline: 1px solid rgba(255, 91, 91, 0.35);
-        background: linear-gradient(180deg, rgba(255, 91, 91, 0.08), transparent);
-      }
-      .pct-bad .badge {
-        background: rgba(255, 91, 91, 0.12);
-        border-color: rgba(255, 91, 91, 0.35);
-        color: var(--danger);
-      }
-      .toolbar {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .sticky {
-        position: sticky;
-        top: 0;
-        background: var(--panel);
-        z-index: 2;
-        border-bottom: 1px solid var(--border);
-      }
-      .small {
-        font-size: 12px;
-      }
-      .checkbox {
-        width: 18px;
-        height: 18px;
-      }
-      .pill {
-        border: 1px solid var(--border);
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #0b0f18;
-      }
-      .totals {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .totals .pill strong {
-        color: var(--accent);
-      }
-      .hint {
-        font-size: 12px;
-        color: var(--muted);
-        margin-top: 6px;
-      }
-      .footer-note {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 12px;
-      }
-      code.k {
-        background: #0b0f18;
-        border: 1px solid var(--border);
-        padding: 1px 6px;
-        border-radius: 6px;
-      }
-      .warn {
-        color: #ffd479;
-      }
-      .api-box {
-        border: 1px dashed var(--border);
-        border-radius: 10px;
-        padding: 10px;
-        background: #0b0f18;
-      }
-      details.examples summary {
-        cursor: pointer;
-        user-select: none;
-      }
-      .example-bar {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        margin: 8px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>Apex Test Coverage Viewer</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apex Test Coverage Viewer</title>
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#151821; --muted:#9aa4b2; --text:#e8ecf1; --accent:#4aa3ff; --danger:#ff5b5b;
+      --ok:#2fd47a; --border:#242939;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    h1{font-size:18px;margin:12px 0}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:1.2fr 2fr;gap:16px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 20px rgba(0,0,0,.25)}
+    .card header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .card header h2{margin:0;font-size:15px}
+    .card .body{padding:12px 14px}
+    textarea{width:100%;min-height:180px;resize:vertical;background:#0b0d12;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    pre{background:#0b0f18;border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+    input[type="text"], input[type="url"], input[type="number"], input[type="password"]{flex:1 1 220px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0b0d12;color:var(--text)}
+    button{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#101626;color:var(--text);cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#1a66ff,#1247b8);border-color:#0f2f7a}
+    button.ghost{background:#101318}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0b0d12;color:var(--text)}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    thead th{font-size:12px;color:var(--muted);text-align:left;padding:6px 10px}
+    tbody tr{background:#0b0f18;border:1px solid var(--border);transition:transform .06s ease}
+    tbody tr:hover{transform:translateY(-1px)}
+    td{padding:10px}
+    .num{font-variant-numeric:tabular-nums;text-align:right}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:#0f1320}
+    .pct-ok .badge{background:rgba(47,212,122,.12);border-color:rgba(47,212,122,.35);color:var(--ok)}
+    .pct-bad{outline:1px solid rgba(255,91,91,.35);background:linear-gradient(180deg,rgba(255,91,91,.08),transparent)}
+    .pct-bad .badge{background:rgba(255,91,91,.12);border-color:rgba(255,91,91,.35);color:var(--danger)}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .muted{color:var(--muted)}
+    .sticky{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--border)}
+    .small{font-size:12px}
+    .checkbox{width:18px;height:18px}
+    .pill{border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:#0b0f18}
+    .totals{display:flex;gap:10px;flex-wrap:wrap}
+    .totals .pill strong{color:var(--accent)}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .footer-note{margin-top:8px;color:var(--muted);font-size:12px}
+    code.k{background:#0b0f18;border:1px solid var(--border);padding:1px 6px;border-radius:6px}
+    .warn{color:#ffd479}
+    .api-box{border:1px dashed var(--border);border-radius:10px;padding:10px;background:#0b0f18}
+    details.examples summary{cursor:pointer;user-select:none}
+    .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Apex Test Coverage Viewer</h1>
 
-      <div class="grid">
-        <!-- Input panel -->
-        <section class="card">
-          <header><h2>Data input</h2></header>
-          <div class="body">
+    <div class="grid">
+      <!-- Input panel -->
+      <section class="card">
+        <header><h2>Data input</h2></header>
+        <div class="body">
+          <div class="row">
+            <label for="source">Source:</label>
+            <select id="source">
+              <option value="paste" selected>Paste (JSON / CSV / TSV)</option>
+              <option value="api">Salesforce Tooling API (manual auth required)</option>
+            </select>
+          </div>
+
+          <!-- Paste mode -->
+          <div id="pasteBox">
             <div class="row">
-              <label for="source">Source:</label>
-              <select id="source">
-                <option value="paste" selected>Paste (JSON / CSV / TSV)</option>
-                <option value="api">Salesforce Tooling API (manual auth required)</option>
-              </select>
+              <button id="btnLoad" class="primary">Load Data</button>
+              <button id="btnSample" class="ghost">Sample</button>
+              <span class="muted small">Expected fields: <code class="k">ApexClassOrTrigger.Name</code>, <code class="k">NumLinesCovered</code>, <code class="k">NumLinesUncovered</code></span>
             </div>
+            <textarea id="inputRaw" placeholder='Paste JSON, CSV, or TSV here.'></textarea>
 
-            <!-- Paste mode -->
-            <div id="pasteBox">
-              <div class="row">
-                <button id="btnLoad" class="primary">Load Data</button>
-                <button id="btnSample" class="ghost">Sample</button>
-                <span class="muted small"
-                  >Expected fields: <code class="k">ApexClassOrTrigger.Name</code>,
-                  <code class="k">NumLinesCovered</code>,
-                  <code class="k">NumLinesUncovered</code></span
-                >
+            <!-- Examples block with Tooling API SOQL -->
+            <details class="examples" style="margin-top:10px">
+              <summary>Input examples and Tooling API SOQL</summary>
+
+              <div class="example-bar">
+                <strong>JSON</strong>
+                <button class="ghost" data-copy="#ex-json">Copy</button>
+                <button class="ghost" data-fill="#ex-json">Fill textarea</button>
               </div>
-              <textarea id="inputRaw" placeholder="Paste JSON, CSV, or TSV here."></textarea>
-
-              <!-- Examples block with Tooling API SOQL -->
-              <details class="examples" style="margin-top: 10px">
-                <summary>Input examples and Tooling API SOQL</summary>
-
-                <div class="example-bar">
-                  <strong>JSON</strong>
-                  <button class="ghost" data-copy="#ex-json">Copy</button>
-                  <button class="ghost" data-fill="#ex-json">Fill textarea</button>
-                </div>
-                <pre id="ex-json"><code>[
+              <pre id="ex-json"><code>[
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
   {"ApexClassOrTrigger.Name":"AccountUtils","NumLinesCovered":92,"NumLinesUncovered":446}
 ]</code></pre>
 
-                <div class="example-bar">
-                  <strong>CSV</strong>
-                  <button class="ghost" data-copy="#ex-csv">Copy</button>
-                  <button class="ghost" data-fill="#ex-csv">Fill textarea</button>
-                </div>
-                <pre id="ex-csv"><code>ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
+              <div class="example-bar">
+                <strong>CSV</strong>
+                <button class="ghost" data-copy="#ex-csv">Copy</button>
+                <button class="ghost" data-fill="#ex-csv">Fill textarea</button>
+              </div>
+              <pre id="ex-csv"><code>ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
 AccountTrigger,5,1
 AccountUtils,92,446</code></pre>
 
-                <div class="example-bar">
-                  <strong>TSV</strong>
-                  <button class="ghost" data-copy="#ex-tsv">Copy</button>
-                  <button class="ghost" data-fill="#ex-tsv">Fill textarea</button>
-                </div>
-                <pre id="ex-tsv"><code>ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
+              <div class="example-bar">
+                <strong>TSV</strong>
+                <button class="ghost" data-copy="#ex-tsv">Copy</button>
+                <button class="ghost" data-fill="#ex-tsv">Fill textarea</button>
+              </div>
+              <pre id="ex-tsv"><code>ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
 AccountUtils	92	446</code></pre>
 
-                <div class="example-bar">
-                  <strong>Tooling API SOQL</strong>
-                  <button class="ghost" data-copy="#ex-soql">Copy</button>
-                </div>
-                <pre
-                  id="ex-soql"
-                ><code>SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
+              <div class="example-bar">
+                <strong>Tooling API SOQL</strong>
+                <button class="ghost" data-copy="#ex-soql">Copy</button>
+              </div>
+              <pre id="ex-soql"><code>SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
 FROM ApexCodeCoverageAggregate</code></pre>
 
-                <div class="hint">
-                  <span class="warn">Important:</span> run the SOQL in **Tooling API** context and
-                  paste the exported result (JSON/CSV/TSV) above, or switch to the Tooling API mode
-                  and provide a valid token. Example CLI:
-                  <code class="k"
-                    >sfdx force:data:soql:query -t -q "SELECT ApexClassOrTrigger.Name,
-                    NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" --json</code
-                  >
-                </div>
-              </details>
-            </div>
-
-            <!-- API mode -->
-            <div id="apiBox" class="api-box" style="display: none">
-              <div class="row">
-                <input
-                  id="instanceUrl"
-                  type="url"
-                  placeholder="Instance URL (e.g., https://yourDomain.my.salesforce.com)"
-                />
-              </div>
-              <div class="row">
-                <input
-                  id="apiVersion"
-                  type="number"
-                  min="30"
-                  max="99"
-                  step="1"
-                  value="61"
-                  style="max-width: 140px"
-                />
-                <input id="accessToken" type="password" placeholder="Access Token (Bearer)" />
-              </div>
-              <div class="row">
-                <input
-                  id="soql"
-                  type="text"
-                  value="SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate"
-                />
-                <button id="btnRun" class="primary">Run Tooling Query</button>
-              </div>
               <div class="hint">
-                <span class="warn">Important:</span> you must provide a valid token and have CORS
-                allowed for your origin. This runs a GET to
-                <code class="k">/services/data/vXX.X/tooling/query/?q=...</code> with
-                <code class="k">Authorization: Bearer &lt;token&gt;</code>.
+                <span class="warn">Important:</span> run the SOQL in **Tooling API** context and paste the exported result (JSON/CSV/TSV) above,
+                or switch to the Tooling API mode and provide a valid token. Example CLI:
+                <code class="k">sfdx force:data:soql:query -t -q "SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" --json</code>
               </div>
-            </div>
-
-            <div id="err" class="hint"></div>
+            </details>
           </div>
-        </section>
 
-        <!-- Main table -->
-        <section class="card">
-          <header class="sticky">
-            <h2 style="flex: 1">All results</h2>
-            <div class="toolbar">
-              <input type="text" id="search" placeholder="Search by name..." />
-              <button id="selectVisible" class="ghost">Select visible</button>
-              <button id="clearSelection" class="ghost">Clear selection</button>
+          <!-- API mode -->
+          <div id="apiBox" class="api-box" style="display:none">
+            <div class="row">
+              <input id="instanceUrl" type="url" placeholder="Instance URL (e.g., https://yourDomain.my.salesforce.com)" />
             </div>
-          </header>
-          <div class="body">
-            <div class="totals" id="totals"></div>
-            <table id="mainTable">
-              <thead>
-                <tr>
-                  <th>
-                    <input type="checkbox" id="checkAll" class="checkbox" title="Select all" />
-                  </th>
-                  <th>Class/Trigger</th>
-                  <th class="num">Covered</th>
-                  <th class="num">Uncovered</th>
-                  <th class="num">% Covered</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-            <div class="footer-note">Rows with coverage below 80% are highlighted in red.</div>
+            <div class="row">
+              <input id="apiVersion" type="number" min="30" max="99" step="1" value="61" style="max-width:140px" />
+              <input id="accessToken" type="password" placeholder="Access Token (Bearer)" />
+            </div>
+            <div class="row">
+              <input id="soql" type="text" value="SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" />
+              <button id="btnRun" class="primary">Run Tooling Query</button>
+            </div>
+            <div class="hint">
+              <span class="warn">Important:</span> you must provide a valid token and have CORS allowed for your origin.
+              This runs a GET to <code class="k">/services/data/vXX.X/tooling/query/?q=...</code> with <code class="k">Authorization: Bearer &lt;token&gt;</code>.
+            </div>
           </div>
-        </section>
-      </div>
 
-      <!-- Refined table -->
-      <section class="card" style="margin-top: 16px">
-        <header>
-          <h2 style="flex: 1">Refined table (selected)</h2>
+          <div id="err" class="hint"></div>
+        </div>
+      </section>
+
+      <!-- Main table -->
+      <section class="card">
+        <header class="sticky">
+          <h2 style="flex:1">All results</h2>
           <div class="toolbar">
-            <button id="exportCsv" class="ghost">Export CSV</button>
-            <span id="refinedTotals" class="muted small"></span>
+            <input type="text" id="search" placeholder="Search by name..." />
+            <button id="selectVisible" class="ghost">Select visible</button>
+            <button id="clearSelection" class="ghost">Clear selection</button>
           </div>
         </header>
         <div class="body">
-          <table id="refinedTable">
+          <div class="totals" id="totals"></div>
+          <table id="mainTable">
             <thead>
               <tr>
+                <th><input type="checkbox" id="checkAll" class="checkbox" title="Select all"/></th>
                 <th>Class/Trigger</th>
                 <th class="num">Covered</th>
                 <th class="num">Uncovered</th>
@@ -426,358 +174,315 @@ FROM ApexCodeCoverageAggregate</code></pre>
             </thead>
             <tbody></tbody>
           </table>
+          <div class="footer-note">Rows with coverage below 80% are highlighted in red.</div>
         </div>
       </section>
     </div>
 
-    <script>
-      // State
-      let rows = [];
-      let filteredIdx = [];
-      let selected = new Set();
+    <!-- Refined table -->
+    <section class="card" style="margin-top:16px">
+      <header>
+        <h2 style="flex:1">Refined table (selected)</h2>
+        <div class="toolbar">
+          <button id="exportCsv" class="ghost">Export CSV</button>
+          <span id="refinedTotals" class="muted small"></span>
+        </div>
+      </header>
+      <div class="body">
+        <table id="refinedTable">
+          <thead>
+            <tr>
+              <th>Class/Trigger</th>
+              <th class="num">Covered</th>
+              <th class="num">Uncovered</th>
+              <th class="num">% Covered</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
 
-      const $ = (sel) => document.querySelector(sel);
-      const mainBody = $('#mainTable tbody');
-      const refinedBody = $('#refinedTable tbody');
+  </div>
 
-      // Mode switching
-      $('#source').addEventListener('change', (e) => {
-        const mode = e.target.value;
-        $('#pasteBox').style.display = mode === 'paste' ? '' : 'none';
-        $('#apiBox').style.display = mode === 'api' ? '' : 'none';
-        $('#err').textContent = '';
-      });
+  <script>
+    // State
+    let rows = [];
+    let filteredIdx = [];
+    let selected = new Set();
 
-      // Examples: copy/fill
-      document.addEventListener('click', (e) => {
-        const copySel = e.target.getAttribute('data-copy');
-        const fillSel = e.target.getAttribute('data-fill');
-        if (copySel) {
-          const text = document.querySelector(copySel)?.innerText ?? '';
-          navigator.clipboard.writeText(text).catch(() => {});
-        }
-        if (fillSel) {
-          const text = document.querySelector(fillSel)?.innerText ?? '';
-          $('#inputRaw').value = text;
-        }
-      });
+    const $ = sel => document.querySelector(sel);
+    const mainBody = $('#mainTable tbody');
+    const refinedBody = $('#refinedTable tbody');
 
-      // Helpers
-      function toInt(v) {
-        const n = Number(v);
-        return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : 0;
+    // Mode switching
+    $('#source').addEventListener('change', (e)=>{
+      const mode = e.target.value;
+      $('#pasteBox').style.display = mode==='paste' ? '' : 'none';
+      $('#apiBox').style.display = mode==='api' ? '' : 'none';
+      $('#err').textContent = '';
+    });
+
+    // Examples: copy/fill
+    document.addEventListener('click', (e)=>{
+      const copySel = e.target.getAttribute('data-copy');
+      const fillSel = e.target.getAttribute('data-fill');
+      if(copySel){
+        const text = document.querySelector(copySel)?.innerText ?? '';
+        navigator.clipboard.writeText(text).catch(()=>{});
       }
-      function escapeHtml(s) {
-        return String(s).replace(
-          /[&<>"']/g,
-          (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]
-        );
+      if(fillSel){
+        const text = document.querySelector(fillSel)?.innerText ?? '';
+        $('#inputRaw').value = text;
       }
-      function sum(list) {
-        const covered = list.reduce((a, b) => a + b.covered, 0);
-        const uncovered = list.reduce((a, b) => a + b.uncovered, 0);
+    });
+
+    // Helpers
+    function toInt(v){ const n = Number(v); return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : 0; }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function sum(list){
+      const covered = list.reduce((a,b)=>a+b.covered,0);
+      const uncovered = list.reduce((a,b)=>a+b.uncovered,0);
+      const total = covered + uncovered;
+      const pct = total>0 ? (covered/total)*100 : 0;
+      return {covered, uncovered, total, pct};
+    }
+
+    function normalizeObjects(input){
+      return input.map(item=>{
+        const name = item["ApexClassOrTrigger.Name"] ?? item.ApexClassOrTrigger?.Name ?? item.Name ?? "";
+        const covered = toInt(item.NumLinesCovered);
+        const uncovered = toInt(item.NumLinesUncovered);
         const total = covered + uncovered;
-        const pct = total > 0 ? (covered / total) * 100 : 0;
-        return { covered, uncovered, total, pct };
-      }
+        const pct = total > 0 ? (covered/total)*100 : 0;
+        return { name, covered, uncovered, total, pct };
+      }).filter(x => x.name !== "");
+    }
 
-      function normalizeObjects(input) {
-        return input
-          .map((item) => {
-            const name =
-              item['ApexClassOrTrigger.Name'] ?? item.ApexClassOrTrigger?.Name ?? item.Name ?? '';
-            const covered = toInt(item.NumLinesCovered);
-            const uncovered = toInt(item.NumLinesUncovered);
-            const total = covered + uncovered;
-            const pct = total > 0 ? (covered / total) * 100 : 0;
-            return { name, covered, uncovered, total, pct };
-          })
-          .filter((x) => x.name !== '');
-      }
+    // Detect & parse
+    function detectFormat(text){
+      const t = text.trim();
+      if(!t) return 'empty';
+      if(t.startsWith('[') || t.startsWith('{')) return 'json';
+      if(t.includes('\t')) return 'tsv';
+      if(t.includes(',')) return 'csv';
+      return 'unknown';
+    }
 
-      // Detect & parse
-      function detectFormat(text) {
-        const t = text.trim();
-        if (!t) return 'empty';
-        if (t.startsWith('[') || t.startsWith('{')) return 'json';
-        if (t.includes('\t')) return 'tsv';
-        if (t.includes(',')) return 'csv';
-        return 'unknown';
+    function parseAny(text){
+      const fmt = detectFormat(text);
+      if(fmt==='json'){
+        const data = JSON.parse(text);
+        if(Array.isArray(data)) return normalizeObjects(data);
+        if(data && Array.isArray(data.records)) return normalizeObjects(data.records);
+        throw new Error('JSON must be an array or have a "records" array.');
+      } else if(fmt==='csv'){
+        const arr = parseCSV(text, ',');
+        return normalizeObjects(arrayToObjects(arr));
+      } else if(fmt==='tsv'){
+        const arr = parseCSV(text, '\t');
+        return normalizeObjects(arrayToObjects(arr));
+      } else if(fmt==='empty'){
+        throw new Error('Empty input.');
+      } else {
+        throw new Error('Could not detect format. Provide JSON, CSV or TSV.');
       }
+    }
 
-      function parseAny(text) {
-        const fmt = detectFormat(text);
-        if (fmt === 'json') {
-          const data = JSON.parse(text);
-          if (Array.isArray(data)) return normalizeObjects(data);
-          if (data && Array.isArray(data.records)) return normalizeObjects(data.records);
-          throw new Error('JSON must be an array or have a "records" array.');
-        } else if (fmt === 'csv') {
-          const arr = parseCSV(text, ',');
-          return normalizeObjects(arrayToObjects(arr));
-        } else if (fmt === 'tsv') {
-          const arr = parseCSV(text, '\t');
-          return normalizeObjects(arrayToObjects(arr));
-        } else if (fmt === 'empty') {
-          throw new Error('Empty input.');
+    function arrayToObjects(matrix){
+      if(!matrix.length) return [];
+      const headers = matrix[0].map(h => h.trim());
+      const out = [];
+      for(let i=1;i<matrix.length;i++){
+        const row = {};
+        for(let j=0;j<headers.length;j++){
+          row[headers[j]] = matrix[i][j] ?? '';
+        }
+        out.push(row);
+      }
+      return out;
+    }
+
+    // Minimal CSV/TSV parser
+    function parseCSV(text, sep=','){
+      const rows = [];
+      let cur = [], val = '', inQuotes = false;
+      const pushCell = () => { cur.push(val); val=''; };
+      const pushRow  = () => { rows.push(cur); cur=[]; };
+      for(let i=0;i<text.length;i++){
+        const ch = text[i], nxt = text[i+1];
+        if(inQuotes){
+          if(ch === '"'){
+            if(nxt === '"'){ val += '"'; i++; } else { inQuotes = false; }
+          } else { val += ch; }
         } else {
-          throw new Error('Could not detect format. Provide JSON, CSV or TSV.');
+          if(ch === '"'){ inQuotes = true; }
+          else if(ch === sep){ pushCell(); }
+          else if(ch === '\n'){ pushCell(); pushRow(); }
+          else if(ch === '\r'){ /* ignore CR */ }
+          else { val += ch; }
         }
       }
+      pushCell(); if(cur.length>1 || rows.length===0) pushRow();
+      return rows.filter(r => r.some(c => String(c).trim()!==''));
+    }
 
-      function arrayToObjects(matrix) {
-        if (!matrix.length) return [];
-        const headers = matrix[0].map((h) => h.trim());
-        const out = [];
-        for (let i = 1; i < matrix.length; i++) {
-          const row = {};
-          for (let j = 0; j < headers.length; j++) {
-            row[headers[j]] = matrix[i][j] ?? '';
-          }
-          out.push(row);
-        }
-        return out;
-      }
+    // Render
+    function renderTable(){
+      mainBody.innerHTML = '';
+      const term = $('#search').value.trim().toLowerCase();
+      filteredIdx = [];
+      rows.forEach((r, i)=>{
+        if(term && !r.name.toLowerCase().includes(term)) return;
+        filteredIdx.push(i);
 
-      // Minimal CSV/TSV parser
-      function parseCSV(text, sep = ',') {
-        const rows = [];
-        let cur = [],
-          val = '',
-          inQuotes = false;
-        const pushCell = () => {
-          cur.push(val);
-          val = '';
-        };
-        const pushRow = () => {
-          rows.push(cur);
-          cur = [];
-        };
-        for (let i = 0; i < text.length; i++) {
-          const ch = text[i],
-            nxt = text[i + 1];
-          if (inQuotes) {
-            if (ch === '"') {
-              if (nxt === '"') {
-                val += '"';
-                i++;
-              } else {
-                inQuotes = false;
-              }
-            } else {
-              val += ch;
-            }
-          } else {
-            if (ch === '"') {
-              inQuotes = true;
-            } else if (ch === sep) {
-              pushCell();
-            } else if (ch === '\n') {
-              pushCell();
-              pushRow();
-            } else if (ch === '\r') {
-              /* ignore CR */
-            } else {
-              val += ch;
-            }
-          }
-        }
-        pushCell();
-        if (cur.length > 1 || rows.length === 0) pushRow();
-        return rows.filter((r) => r.some((c) => String(c).trim() !== ''));
-      }
+        const tr = document.createElement('tr');
+        tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
 
-      // Render
-      function renderTable() {
-        mainBody.innerHTML = '';
-        const term = $('#search').value.trim().toLowerCase();
-        filteredIdx = [];
-        rows.forEach((r, i) => {
-          if (term && !r.name.toLowerCase().includes(term)) return;
-          filteredIdx.push(i);
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.className = 'checkbox'; cb.checked = selected.has(i);
+        cb.addEventListener('change', ()=>{
+          if(cb.checked) selected.add(i); else selected.delete(i);
+          renderRefined();
+        });
 
-          const tr = document.createElement('tr');
-          tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
-
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.className = 'checkbox';
-          cb.checked = selected.has(i);
-          cb.addEventListener('change', () => {
-            if (cb.checked) selected.add(i);
-            else selected.delete(i);
-            renderRefined();
-          });
-
-          tr.innerHTML = `
+        tr.innerHTML = `
           <td></td>
           <td>${escapeHtml(r.name)}</td>
           <td class="num">${r.covered}</td>
           <td class="num">${r.uncovered}</td>
           <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
         `;
-          tr.firstElementChild.appendChild(cb);
-          mainBody.appendChild(tr);
-        });
+        tr.firstElementChild.appendChild(cb);
+        mainBody.appendChild(tr);
+      });
 
-        const totals = sum(rows);
-        $('#totals').innerHTML = `
+      const totals = sum(rows);
+      $('#totals').innerHTML = `
         <span class="pill">Total lines: <strong>${totals.total}</strong></span>
         <span class="pill">Covered: <strong>${totals.covered}</strong></span>
         <span class="pill">Uncovered: <strong>${totals.uncovered}</strong></span>
         <span class="pill">Overall %: <strong>${totals.pct.toFixed(2)}%</strong></span>
         <span class="pill">Items: <strong>${rows.length}</strong></span>
       `;
-        $('#checkAll').checked =
-          filteredIdx.every((i) => selected.has(i)) && filteredIdx.length > 0;
-        renderRefined();
-      }
+      $('#checkAll').checked = filteredIdx.every(i => selected.has(i)) && filteredIdx.length>0;
+      renderRefined();
+    }
 
-      function renderRefined() {
-        refinedBody.innerHTML = '';
-        const chosen = [...selected].map((i) => rows[i]);
-        chosen.forEach((r) => {
-          const tr = document.createElement('tr');
-          tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
-          tr.innerHTML = `
+    function renderRefined(){
+      refinedBody.innerHTML = '';
+      const chosen = [...selected].map(i => rows[i]);
+      chosen.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
+        tr.innerHTML = `
           <td>${escapeHtml(r.name)}</td>
           <td class="num">${r.covered}</td>
           <td class="num">${r.uncovered}</td>
           <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
         `;
-          refinedBody.appendChild(tr);
-        });
-        const totals = sum(chosen);
-        $('#refinedTotals').textContent = chosen.length
-          ? `Selected: ${chosen.length} • Avg %: ${totals.pct.toFixed(2)}%`
-          : 'No selection';
-      }
-
-      // Paste mode actions
-      $('#btnLoad').addEventListener('click', () => {
-        $('#err').textContent = '';
-        selected.clear();
-        try {
-          rows = parseAny($('#inputRaw').value);
-          if (!rows.length) throw new Error('No valid rows found.');
-          renderTable();
-        } catch (e) {
-          rows = [];
-          mainBody.innerHTML = '';
-          refinedBody.innerHTML = '';
-          $('#totals').innerHTML = '';
-          $('#refinedTotals').textContent = '';
-          $('#err').textContent = 'Error: ' + e.message;
-        }
+        refinedBody.appendChild(tr);
       });
+      const totals = sum(chosen);
+      $('#refinedTotals').textContent =
+        chosen.length ? `Selected: ${chosen.length} • Avg %: ${totals.pct.toFixed(2)}%` : 'No selection';
+    }
 
-      $('#btnSample').addEventListener('click', () => {
-        const sample = [
-          { 'ApexClassOrTrigger.Name': 'AccountTrigger', NumLinesCovered: 5, NumLinesUncovered: 1 },
-          {
-            'ApexClassOrTrigger.Name': 'ATL_AvayaConnectorController',
-            NumLinesCovered: 137,
-            NumLinesUncovered: 16,
-          },
-          {
-            'ApexClassOrTrigger.Name': 'ATL_AutosservicoGetInvalidAsset',
-            NumLinesCovered: 31,
-            NumLinesUncovered: 11,
-          },
-          { 'ApexClassOrTrigger.Name': 'ATL_Utils', NumLinesCovered: 92, NumLinesUncovered: 446 },
-          {
-            'ApexClassOrTrigger.Name': 'BusinessHoursUtil',
-            NumLinesCovered: 39,
-            NumLinesUncovered: 1,
-          },
-          {
-            'ApexClassOrTrigger.Name': 'TriggerHandler',
-            NumLinesCovered: 44,
-            NumLinesUncovered: 59,
-          },
-        ];
-        $('#inputRaw').value = JSON.stringify(sample, null, 2);
-      });
-
-      // API mode actions
-      async function runTooling() {
-        const base = $('#instanceUrl').value.trim().replace(/\/+$/, '');
-        const v = $('#apiVersion').value.trim();
-        const token = $('#accessToken').value.trim();
-        const soql = $('#soql').value.trim();
-        if (!base || !v || !token || !soql) {
-          throw new Error('Instance URL, API Version, Access Token and SOQL are required.');
-        }
-        const url = `${base}/services/data/v${encodeURIComponent(v)}/tooling/query/?q=${encodeURIComponent(soql)}`;
-        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-        if (!res.ok) {
-          const t = await res.text().catch(() => '');
-          throw new Error(`HTTP ${res.status} ${res.statusText} • ${t.slice(0, 300)}`);
-        }
-        const json = await res.json();
-        const records = Array.isArray(json.records) ? json.records : [];
-        return normalizeObjects(records);
-      }
-
-      $('#btnRun').addEventListener('click', async () => {
-        $('#err').textContent = '';
-        selected.clear();
-        try {
-          rows = await runTooling();
-          if (!rows.length) throw new Error('No records returned or fields missing.');
-          renderTable();
-        } catch (e) {
-          rows = [];
-          mainBody.innerHTML = '';
-          refinedBody.innerHTML = '';
-          $('#totals').innerHTML = '';
-          $('#refinedTotals').textContent = '';
-          $('#err').textContent = 'Tooling API error: ' + e.message;
-        }
-      });
-
-      // Common controls
-      $('#search').addEventListener('input', renderTable);
-
-      $('#checkAll').addEventListener('change', (e) => {
-        const mark = e.target.checked;
-        filteredIdx.forEach((i) => (mark ? selected.add(i) : selected.delete(i)));
+    // Paste mode actions
+    $('#btnLoad').addEventListener('click', ()=>{
+      $('#err').textContent = '';
+      selected.clear();
+      try{
+        rows = parseAny($('#inputRaw').value);
+        if(!rows.length) throw new Error('No valid rows found.');
         renderTable();
-      });
+      }catch(e){
+        rows = []; mainBody.innerHTML = ''; refinedBody.innerHTML = '';
+        $('#totals').innerHTML = ''; $('#refinedTotals').textContent = '';
+        $('#err').textContent = 'Error: ' + e.message;
+      }
+    });
 
-      $('#selectVisible').addEventListener('click', () => {
-        filteredIdx.forEach((i) => selected.add(i));
-        renderRefined();
-        $('#checkAll').checked = filteredIdx.length > 0;
-      });
+    $('#btnSample').addEventListener('click', ()=>{
+      const sample = [
+        {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
+        {"ApexClassOrTrigger.Name":"ATL_AvayaConnectorController","NumLinesCovered":137,"NumLinesUncovered":16},
+        {"ApexClassOrTrigger.Name":"ATL_AutosservicoGetInvalidAsset","NumLinesCovered":31,"NumLinesUncovered":11},
+        {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446},
+        {"ApexClassOrTrigger.Name":"BusinessHoursUtil","NumLinesCovered":39,"NumLinesUncovered":1},
+        {"ApexClassOrTrigger.Name":"TriggerHandler","NumLinesCovered":44,"NumLinesUncovered":59}
+      ];
+      $('#inputRaw').value = JSON.stringify(sample, null, 2);
+    });
 
-      $('#clearSelection').addEventListener('click', () => {
-        selected.clear();
+    // API mode actions
+    async function runTooling(){
+      const base = $('#instanceUrl').value.trim().replace(/\/+$/,'');
+      const v = $('#apiVersion').value.trim();
+      const token = $('#accessToken').value.trim();
+      const soql = $('#soql').value.trim();
+      if(!base || !v || !token || !soql){
+        throw new Error('Instance URL, API Version, Access Token and SOQL are required.');
+      }
+      const url = `${base}/services/data/v${encodeURIComponent(v)}/tooling/query/?q=${encodeURIComponent(soql)}`;
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      if(!res.ok){
+        const t = await res.text().catch(()=> '');
+        throw new Error(`HTTP ${res.status} ${res.statusText} • ${t.slice(0,300)}`);
+      }
+      const json = await res.json();
+      const records = Array.isArray(json.records) ? json.records : [];
+      return normalizeObjects(records);
+    }
+
+    $('#btnRun').addEventListener('click', async ()=>{
+      $('#err').textContent = '';
+      selected.clear();
+      try{
+        rows = await runTooling();
+        if(!rows.length) throw new Error('No records returned or fields missing.');
         renderTable();
-      });
+      }catch(e){
+        rows = []; mainBody.innerHTML = ''; refinedBody.innerHTML = '';
+        $('#totals').innerHTML = ''; $('#refinedTotals').textContent = '';
+        $('#err').textContent = 'Tooling API error: ' + e.message;
+      }
+    });
 
-      $('#exportCsv').addEventListener('click', () => {
-        const chosen = [...selected].map((i) => rows[i]);
-        if (!chosen.length) {
-          alert('No selection.');
-          return;
-        }
-        const header = ['Name', 'NumLinesCovered', 'NumLinesUncovered', 'PercentCovered'];
-        const lines = [header.join(',')].concat(
-          chosen.map((r) =>
-            [`"${r.name.replace(/"/g, '""')}"`, r.covered, r.uncovered, r.pct.toFixed(2)].join(',')
-          )
-        );
-        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'refined_coverage.csv';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      });
-    </script>
-  </body>
+    // Common controls
+    $('#search').addEventListener('input', renderTable);
+
+    $('#checkAll').addEventListener('change', (e)=>{
+      const mark = e.target.checked;
+      filteredIdx.forEach(i => mark ? selected.add(i) : selected.delete(i));
+      renderTable();
+    });
+
+    $('#selectVisible').addEventListener('click', ()=>{
+      filteredIdx.forEach(i => selected.add(i));
+      renderRefined();
+      $('#checkAll').checked = filteredIdx.length>0;
+    });
+
+    $('#clearSelection').addEventListener('click', ()=>{
+      selected.clear();
+      renderTable();
+    });
+
+    $('#exportCsv').addEventListener('click', ()=>{
+      const chosen = [...selected].map(i=>rows[i]);
+      if(!chosen.length){ alert('No selection.'); return; }
+      const header = ['Name','NumLinesCovered','NumLinesUncovered','PercentCovered'];
+      const lines = [header.join(',')].concat(chosen.map(r=>[
+        `"${r.name.replace(/"/g,'""')}"`, r.covered, r.uncovered, r.pct.toFixed(2)
+      ].join(',')));
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'refined_coverage.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
 </html>

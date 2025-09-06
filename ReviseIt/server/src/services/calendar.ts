@@ -17,5 +17,5 @@ export async function createCalendarEventStub(input: CreateEventInput) {
     tz: input.tz,
   });
   // Return fake "event id"
-  return `evt_${input.itemId.slice(0, 6)}_${Math.floor(Math.random() * 9999)}`;
+  return `evt_${input.itemId.slice(0,6)}_${Math.floor(Math.random()*9999)}`;
 }
