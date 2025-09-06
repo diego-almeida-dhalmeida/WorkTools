@@ -5,76 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aplicativos Diversos</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      color: #333;
-      margin: 0;
-      padding: 2rem;
+
+    :root{
+      --bg:#0f1115; --panel:#151821; --muted:#9aa4b2; --text:#e8ecf1; --accent:#4aa3ff; --danger:#ff5b5b;
+      --ok:#2fd47a; --border:#242939;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .apps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-    }
-    .card h2 {
-      margin-top: 0;
-      font-size: 1.2rem;
-      color: #0056b3;
-    }
-    .card p {
-      margin: 0.5rem 0 1rem;
-      font-size: 0.95rem;
-    }
-    .card a {
-      text-decoration: none;
-      color: #fff;
-      background: #007bff;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    .card a:hover {
-      background: #0056b3;
-    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    h1{font-size:18px;margin:12px 0}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:1.2fr 2fr;gap:16px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 20px rgba(0,0,0,.25)}
+    .card header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .card header h2{margin:0;font-size:15px}
+    .card .body{padding:12px 14px}
+    textarea{width:100%;min-height:180px;resize:vertical;background:#0b0d12;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    pre{background:#0b0f18;border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+    input[type="text"], input[type="url"], input[type="number"], input[type="password"]{flex:1 1 220px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0b0d12;color:var(--text)}
+    button{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#101626;color:var(--text);cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#1a66ff,#1247b8);border-color:#0f2f7a}
+    button.ghost{background:#101318}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0b0d12;color:var(--text)}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    thead th{font-size:12px;color:var(--muted);text-align:left;padding:6px 10px}
+    tbody tr{background:#0b0f18;border:1px solid var(--border);transition:transform .06s ease}
+    tbody tr:hover{transform:translateY(-1px)}
+    td{padding:10px}
+    .num{font-variant-numeric:tabular-nums;text-align:right}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:#0f1320}
+    .pct-ok .badge{background:rgba(47,212,122,.12);border-color:rgba(47,212,122,.35);color:var(--ok)}
+    .pct-bad{outline:1px solid rgba(255,91,91,.35);background:linear-gradient(180deg,rgba(255,91,91,.08),transparent)}
+    .pct-bad .badge{background:rgba(255,91,91,.12);border-color:rgba(255,91,91,.35);color:var(--danger)}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .muted{color:var(--muted)}
+    .sticky{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--border)}
+    .small{font-size:12px}
+    .checkbox{width:18px;height:18px}
+    .pill{border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:#0b0f18}
+    .totals{display:flex;gap:10px;flex-wrap:wrap}
+    .totals .pill strong{color:var(--accent)}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .footer-note{margin-top:8px;color:var(--muted);font-size:12px}
+    code.k{background:#0b0f18;border:1px solid var(--border);padding:1px 6px;border-radius:6px}
+    .warn{color:#ffd479}
+    .api-box{border:1px dashed var(--border);border-radius:10px;padding:10px;background:#0b0f18}
+    details.examples summary{cursor:pointer;user-select:none}
+    .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
+  
+
+  /* Portal-specific layout */
+  body { background: var(--bg); color: var(--text); margin: 0; }
+  .wrap { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+  .header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+  .title { font-size: clamp(22px, 2.8vw, 32px); color: var(--text); }
+  .desc { color: var(--muted); font-size: 14px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: transform .15s ease, box-shadow .15s ease; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--text); }
+  .card p { margin: 0 0 12px; font-size: 13px; color: var(--muted); min-height: 42px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--chip); color: var(--text); text-decoration:none; font-size: 13px; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .badge { font-size:12px; color: var(--muted); padding:4px 8px; border-radius: 999px; border:1px solid var(--border); background: var(--chip); }
+  footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align:center; }
   </style>
 </head>
 <body>
-  <h1>Aplicativos Diversos</h1>
-  <div class="apps">
-
-    <div class="card">
-      <h2>Apex Test Coverage Viewer</h2>
-      <p>Ferramenta web para visualizar cobertura de testes Apex de forma interativa e clara.</p>
-      <a href="./ApexTestCoverageViewer/index.html">Abrir App</a>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">Aplicativos Diversos</div>
+        <div class="desc">Portal central com links para os aplicativos do repositório.</div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Gantt Chart Editor</h2>
-      <p>Editor de gráficos de Gantt em HTML + JavaScript para planejar e visualizar tarefas.</p>
-      <a href="./GanttChartEditor/index.html">Abrir App</a>
+    <div class="grid">
+
+      <article class="card">
+        <h3>Apex Test Coverage Viewer</h3>
+        <p>Ferramenta web para visualizar cobertura de testes Apex de forma interativa e clara.</p>
+        <div class="row">
+          <a class="btn" href="./ApexTestCoverageViewer/index.html" rel="noopener">Abrir app</a>
+          <span class="badge">HTML</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Gantt Chart Editor</h3>
+        <p>Editor de gráficos de Gantt em HTML + JavaScript para planejar e visualizar tarefas.</p>
+        <div class="row">
+          <a class="btn" href="./GanttChartEditor/index.html" rel="noopener">Abrir app</a>
+          <span class="badge">HTML</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Revise.it</h3>
+        <p>Skeleton de aplicação para aplicar técnica de revisão espaçada no dia a dia.</p>
+        <div class="row">
+          <a class="btn" href="./ReviseIt/index.html" rel="noopener">Abrir app</a>
+          <span class="badge">Skeleton</span>
+        </div>
+      </article>
+
     </div>
 
-    <div class="card">
-      <h2>Revise.it</h2>
-      <p>Skeleton de aplicação para aplicar técnica de revisão espaçada no dia a dia.</p>
-      <a href="./ReviseIt/index.html">Abrir App</a>
-    </div>
-
+    <footer>Estilo baseado no Apex Test Coverage Viewer · Links relativos · {}
+    </footer>
   </div>
 </body>
 </html>
