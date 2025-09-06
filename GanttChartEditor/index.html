@@ -20,10 +20,33 @@
       padding: 2px;
     }
   </style>
+
+<style>
+:root{--bg:#0b0e14;--panel:#101524;--chip:#0d1322;--text:#e6f1ff;--muted:#94a3b8;--border:#1b2440;--accent:#5ef2ff;--accent2:#20f59b;--shadow:0 8px 30px rgba(0,0,0,.45);--glow:0 0 12px rgba(32,245,155,.35),0 0 18px rgba(94,242,255,.25)}
+html[data-theme="light"]{--bg:#f6f7fb;--panel:#ffffff;--chip:#f2f4f8;--text:#1f2937;--muted:#4b5563;--border:#e5e7eb;--accent:#2563eb;--accent2:#059669;--shadow:0 10px 24px rgba(0,0,0,.08);--glow:none}
+.topbar{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.actions{display:flex;gap:10px;align-items:center}
+.lang-toggle button,.theme-toggle{background:var(--chip);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.lang-toggle button.active{border-color:var(--accent);box-shadow:var(--glow);color:var(--accent)}
+.theme-toggle:hover{border-color:var(--accent2);box-shadow:var(--glow)}
+.icon{width:16px;height:16px;display:inline-block}
+</style>
+
 </head>
 <body class="p-4">
+<div class="topbar">
+  <div class="subtitle" data-i18n="title_portal">Aplicativos Diversos</div>
+  <div class="actions">
+    <div class="lang-toggle">
+      <button data-lang="en" onclick="setLanguage('en')" class="active" data-i18n="lang_en">English</button>
+      <button data-lang="pt" onclick="setLanguage('pt')" data-i18n="lang_pt">Português</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon"></span><span data-i18n="theme_dark">Dark</span></button>
+  </div>
+</div>
+
 <div class="container">
-  <h1 class="bg-primary text-white p-3 rounded">Editor Gantt com Tons Pastéis</h1>
+  <h1class="bg-primary text-white p-3 rounded" data-i18n="ganttcharteditor_editor_gantt_com_tons_past_is">Editor Gantt com Tons Pastéis</h1>
 
   <div class="card mt-4 shadow-sm">
   <div class="card-header bg-primary text-white">
@@ -32,28 +55,28 @@
   <div class="card-body">
     <form id="formulario" class="row g-3">
     <div class="col-md-6">
-      <label class="form-label">Descrição</label>
+      <labelclass="form-label" data-i18n="ganttcharteditor_descri_o">Descrição</label>
       <input type="text" id="descricao" class="form-control">
     </div>
     <div class="col-md-3">
-      <label class="form-label">Cor</label>
+      <labelclass="form-label" data-i18n="ganttcharteditor_62037d4390">Cor</label>
       <select id="cor" class="form-select"></select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Períodos</label>
+      <labelclass="form-label" data-i18n="ganttcharteditor_per_odos">Períodos</label>
       <select id="periodos" class="form-select">
-        <option value="1">1 período(s)</option><option value="2">2 período(s)</option><option value="3">3 período(s)</option><option value="4">4 período(s)</option><option value="5">5 período(s)</option><option value="6">6 período(s)</option><option value="7">7 período(s)</option><option value="8">8 período(s)</option><option value="9">9 período(s)</option>
+        <optionvalue="1" data-i18n="ganttcharteditor_1_per_odo_s">1 período(s)</option><optionvalue="2" data-i18n="ganttcharteditor_2_per_odo_s">2 período(s)</option><optionvalue="3" data-i18n="ganttcharteditor_3_per_odo_s">3 período(s)</option><optionvalue="4" data-i18n="ganttcharteditor_4_per_odo_s">4 período(s)</option><optionvalue="5" data-i18n="ganttcharteditor_5_per_odo_s">5 período(s)</option><optionvalue="6" data-i18n="ganttcharteditor_6_per_odo_s">6 período(s)</option><optionvalue="7" data-i18n="ganttcharteditor_7_per_odo_s">7 período(s)</option><optionvalue="8" data-i18n="ganttcharteditor_8_per_odo_s">8 período(s)</option><optionvalue="9" data-i18n="ganttcharteditor_9_per_odo_s">9 período(s)</option>
       </select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Início do Projeto</label>
+      <labelclass="form-label" data-i18n="ganttcharteditor_in_cio_do_projeto">Início do Projeto</label>
       <input type="date" id="inicio" class="form-control" value="2025-07-30">
     </div>
     <div class="col-12">
-      <button type="button" class="btn btn-success" onclick="incluirTarefa()">Incluir</button>
-      <button type="button" class="btn btn-warning" onclick="editarTarefa()">Editar</button>
-      <button type="button" class="btn btn-danger" onclick="excluirTarefa()">Excluir</button>
-      <button type="button" class="btn btn-secondary" onclick="exportarJSON()">Exportar JSON</button>
+      <buttontype="button" class="btn btn-success" onclick="incluirTarefa()" data-i18n="ganttcharteditor_incluir">Incluir</button>
+      <buttontype="button" class="btn btn-warning" onclick="editarTarefa()" data-i18n="ganttcharteditor_editar">Editar</button>
+      <buttontype="button" class="btn btn-danger" onclick="excluirTarefa()" data-i18n="ganttcharteditor_excluir">Excluir</button>
+      <buttontype="button" class="btn btn-secondary" onclick="exportarJSON()" data-i18n="ganttcharteditor_exportar_json">Exportar JSON</button>
       <label class="btn btn-secondary mb-0">
         Importar JSON <input type="file" id="importarJson" style="display:none" onchange="importarJSON(event)">
       </label>
@@ -256,7 +279,7 @@ function gerarTabela() {
   console.log("Dias gerados para tabela:", dias);
   const tr1 = document.createElement("tr");
   const tr2 = document.createElement("tr");
-  tr1.innerHTML = '<th rowspan="2">Descrição</th>';
+  tr1.innerHTML = '<throwspan="2" data-i18n="ganttcharteditor_descri_o">Descrição</th>';
   tr1.className = dias.length > 5 ? "vertical-header" : "";
   dias.forEach(d => {
     const th = document.createElement("th");
@@ -471,5 +494,99 @@ window.onload = () => {
   gerarTabela();
 };
 </script>
+<script id="i18n-extra" type="application/json">{"en": {"ganttcharteditor_editor_gantt_com_tons_past_is": "Editor Gantt com Tons Pastéis", "ganttcharteditor_descri_o": "Descrição", "ganttcharteditor_62037d4390": "Cor", "ganttcharteditor_per_odos": "Períodos", "ganttcharteditor_1_per_odo_s": "1 período(s)", "ganttcharteditor_2_per_odo_s": "2 período(s)", "ganttcharteditor_3_per_odo_s": "3 período(s)", "ganttcharteditor_4_per_odo_s": "4 período(s)", "ganttcharteditor_5_per_odo_s": "5 período(s)", "ganttcharteditor_6_per_odo_s": "6 período(s)", "ganttcharteditor_7_per_odo_s": "7 período(s)", "ganttcharteditor_8_per_odo_s": "8 período(s)", "ganttcharteditor_9_per_odo_s": "9 período(s)", "ganttcharteditor_in_cio_do_projeto": "Início do Projeto", "ganttcharteditor_incluir": "Incluir", "ganttcharteditor_editar": "Editar", "ganttcharteditor_excluir": "Excluir", "ganttcharteditor_exportar_json": "Exportar JSON"}, "pt": {"ganttcharteditor_editor_gantt_com_tons_past_is": "Editor Gantt com Tons Pastéis", "ganttcharteditor_descri_o": "Descrição", "ganttcharteditor_62037d4390": "Cor", "ganttcharteditor_per_odos": "Períodos", "ganttcharteditor_1_per_odo_s": "1 período(s)", "ganttcharteditor_2_per_odo_s": "2 período(s)", "ganttcharteditor_3_per_odo_s": "3 período(s)", "ganttcharteditor_4_per_odo_s": "4 período(s)", "ganttcharteditor_5_per_odo_s": "5 período(s)", "ganttcharteditor_6_per_odo_s": "6 período(s)", "ganttcharteditor_7_per_odo_s": "7 período(s)", "ganttcharteditor_8_per_odo_s": "8 período(s)", "ganttcharteditor_9_per_odo_s": "9 período(s)", "ganttcharteditor_in_cio_do_projeto": "Início do Projeto", "ganttcharteditor_incluir": "Incluir", "ganttcharteditor_editar": "Editar", "ganttcharteditor_excluir": "Excluir", "ganttcharteditor_exportar_json": "Exportar JSON"}}</script>
+
+<script>
+(function(){
+  const base = window.__i18nBase || {
+    en: {
+      title_portal: "Aplicativos Diversos",
+      subtitle_portal: "Central portal with links to all apps in this repository.",
+      open_app: "Open app",
+      app_apex_title: "Apex Test Coverage Viewer",
+      app_apex_desc: "Web tool to visualize Apex test coverage interactively and clearly.",
+      app_gantt_title: "Gantt Chart Editor",
+      app_gantt_desc: "Gantt chart editor (HTML + JavaScript) to plan and visualize tasks.",
+      app_revise_title: "Revise.it",
+      app_revise_desc: "Skeleton app to apply spaced repetition in daily life.",
+      lang_en: "English",
+      lang_pt: "Português",
+      theme_dark: "Dark",
+      theme_light: "Light"
+    },
+    pt: {
+      title_portal: "Aplicativos Diversos",
+      subtitle_portal: "Portal central com links para todos os apps deste repositório.",
+      open_app: "Abrir app",
+      app_apex_title: "Apex Test Coverage Viewer",
+      app_apex_desc: "Ferramenta web para visualizar cobertura de testes Apex de forma interativa e clara.",
+      app_gantt_title: "Gantt Chart Editor",
+      app_gantt_desc: "Editor de gráficos de Gantt (HTML + JavaScript) para planejar e visualizar tarefas.",
+      app_revise_title: "Revise.it",
+      app_revise_desc: "Skeleton de aplicação para aplicar técnica de revisão espaçada no dia a dia.",
+      lang_en: "English",
+      lang_pt: "Português",
+      theme_dark: "Escuro",
+      theme_light: "Claro"
+    }
+  };
+
+  function deepMerge(target, source){
+    for (const k in source){
+      if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k])){
+        target[k] = target[k] || {};
+        deepMerge(target[k], source[k]);
+      } else {
+        target[k] = source[k];
+      }
+    }
+    return target;
+  }
+
+  const extraEl = document.getElementById('i18n-extra');
+  if (extraEl){
+    try {
+      const extra = JSON.parse(extraEl.textContent || "{}");
+      deepMerge(base, extra);
+    } catch(e){}
+  }
+
+  let lang = localStorage.getItem('lang') || 'en';
+  let theme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+
+  function applyI18n(root=document){
+    root.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const t = (base[lang] && base[lang][key]) || "";
+      if (t) el.textContent = t;
+    });
+    document.querySelectorAll(".lang-toggle button").forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+    const icon = document.querySelector(".theme-toggle .icon");
+    if (icon){
+      icon.innerHTML = theme === 'dark'
+        ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>'
+        : '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zM1 13h3v-2H1v2zm10 10h2v-3h-2v3zm9-10v-2h-3v2h3zM6.76 19.16l-1.8 1.8 1.79 1.79 1.8-1.8-1.79-1.79zM11 1h2v3h-2V1zm7.07 3.05l-1.79 1.8 1.8 1.79 1.79-1.79-1.8-1.8zM4.22 10.99A7.78 7.78 0 1 0 12 4.22 7.78 7.78 0 0 0 4.22 11z"/></svg>';
+    }
+  }
+
+  window.setLanguage = function(newLang){
+    lang = newLang;
+    localStorage.setItem('lang', lang);
+    applyI18n();
+  };
+  window.toggleTheme = function(){
+    theme = theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    applyI18n();
+  };
+
+  document.addEventListener("DOMContentLoaded", applyI18n);
+})();
+</script>
+
 </body>
 </html>

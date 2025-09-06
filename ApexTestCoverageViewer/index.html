@@ -53,8 +53,31 @@
     details.examples summary{cursor:pointer;user-select:none}
     .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
   </style>
+
+<style>
+:root{--bg:#0b0e14;--panel:#101524;--chip:#0d1322;--text:#e6f1ff;--muted:#94a3b8;--border:#1b2440;--accent:#5ef2ff;--accent2:#20f59b;--shadow:0 8px 30px rgba(0,0,0,.45);--glow:0 0 12px rgba(32,245,155,.35),0 0 18px rgba(94,242,255,.25)}
+html[data-theme="light"]{--bg:#f6f7fb;--panel:#ffffff;--chip:#f2f4f8;--text:#1f2937;--muted:#4b5563;--border:#e5e7eb;--accent:#2563eb;--accent2:#059669;--shadow:0 10px 24px rgba(0,0,0,.08);--glow:none}
+.topbar{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.actions{display:flex;gap:10px;align-items:center}
+.lang-toggle button,.theme-toggle{background:var(--chip);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.lang-toggle button.active{border-color:var(--accent);box-shadow:var(--glow);color:var(--accent)}
+.theme-toggle:hover{border-color:var(--accent2);box-shadow:var(--glow)}
+.icon{width:16px;height:16px;display:inline-block}
+</style>
+
 </head>
 <body>
+<div class="topbar">
+  <div class="subtitle" data-i18n="title_portal">Aplicativos Diversos</div>
+  <div class="actions">
+    <div class="lang-toggle">
+      <button data-lang="en" onclick="setLanguage('en')" class="active" data-i18n="lang_en">English</button>
+      <button data-lang="pt" onclick="setLanguage('pt')" data-i18n="lang_pt">Português</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()"><span class="icon"></span><span data-i18n="theme_dark">Dark</span></button>
+  </div>
+</div>
+
   <div class="wrap">
     <h1>Apex Test Coverage Viewer</h1>
 
@@ -64,18 +87,18 @@
         <header><h2>Data input</h2></header>
         <div class="body">
           <div class="row">
-            <label for="source">Source:</label>
+            <labelfor="source" data-i18n="apextestcoverageviewer_source">Source:</label>
             <select id="source">
-              <option value="paste" selected>Paste (JSON / CSV / TSV)</option>
-              <option value="api">Salesforce Tooling API (manual auth required)</option>
+              <optionvalue="paste" selected data-i18n="apextestcoverageviewer_paste_json_csv_tsv">Paste (JSON / CSV / TSV)</option>
+              <optionvalue="api" data-i18n="apextestcoverageviewer_ea0b5aac68">Salesforce Tooling API (manual auth required)</option>
             </select>
           </div>
 
           <!-- Paste mode -->
           <div id="pasteBox">
             <div class="row">
-              <button id="btnLoad" class="primary">Load Data</button>
-              <button id="btnSample" class="ghost">Sample</button>
+              <buttonid="btnLoad" class="primary" data-i18n="apextestcoverageviewer_load_data">Load Data</button>
+              <buttonid="btnSample" class="ghost" data-i18n="apextestcoverageviewer_sample">Sample</button>
               <span class="muted small">Expected fields: <code class="k">ApexClassOrTrigger.Name</code>, <code class="k">NumLinesCovered</code>, <code class="k">NumLinesUncovered</code></span>
             </div>
             <textarea id="inputRaw" placeholder='Paste JSON, CSV, or TSV here.'></textarea>
@@ -86,8 +109,8 @@
 
               <div class="example-bar">
                 <strong>JSON</strong>
-                <button class="ghost" data-copy="#ex-json">Copy</button>
-                <button class="ghost" data-fill="#ex-json">Fill textarea</button>
+                <buttonclass="ghost" data-copy="#ex-json" data-i18n="apextestcoverageviewer_copy">Copy</button>
+                <buttonclass="ghost" data-fill="#ex-json" data-i18n="apextestcoverageviewer_fill_textarea">Fill textarea</button>
               </div>
               <pre id="ex-json"><code>[
   {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
@@ -96,8 +119,8 @@
 
               <div class="example-bar">
                 <strong>CSV</strong>
-                <button class="ghost" data-copy="#ex-csv">Copy</button>
-                <button class="ghost" data-fill="#ex-csv">Fill textarea</button>
+                <buttonclass="ghost" data-copy="#ex-csv" data-i18n="apextestcoverageviewer_copy">Copy</button>
+                <buttonclass="ghost" data-fill="#ex-csv" data-i18n="apextestcoverageviewer_fill_textarea">Fill textarea</button>
               </div>
               <pre id="ex-csv"><code>ApexClassOrTrigger.Name,NumLinesCovered,NumLinesUncovered
 AccountTrigger,5,1
@@ -105,8 +128,8 @@ AccountUtils,92,446</code></pre>
 
               <div class="example-bar">
                 <strong>TSV</strong>
-                <button class="ghost" data-copy="#ex-tsv">Copy</button>
-                <button class="ghost" data-fill="#ex-tsv">Fill textarea</button>
+                <buttonclass="ghost" data-copy="#ex-tsv" data-i18n="apextestcoverageviewer_copy">Copy</button>
+                <buttonclass="ghost" data-fill="#ex-tsv" data-i18n="apextestcoverageviewer_fill_textarea">Fill textarea</button>
               </div>
               <pre id="ex-tsv"><code>ApexClassOrTrigger.Name	NumLinesCovered	NumLinesUncovered
 AccountTrigger	5	1
@@ -114,13 +137,13 @@ AccountUtils	92	446</code></pre>
 
               <div class="example-bar">
                 <strong>Tooling API SOQL</strong>
-                <button class="ghost" data-copy="#ex-soql">Copy</button>
+                <buttonclass="ghost" data-copy="#ex-soql" data-i18n="apextestcoverageviewer_copy">Copy</button>
               </div>
               <pre id="ex-soql"><code>SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered
 FROM ApexCodeCoverageAggregate</code></pre>
 
               <div class="hint">
-                <span class="warn">Important:</span> run the SOQL in **Tooling API** context and paste the exported result (JSON/CSV/TSV) above,
+                <spanclass="warn" data-i18n="apextestcoverageviewer_important">Important:</span> run the SOQL in **Tooling API** context and paste the exported result (JSON/CSV/TSV) above,
                 or switch to the Tooling API mode and provide a valid token. Example CLI:
                 <code class="k">sfdx force:data:soql:query -t -q "SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" --json</code>
               </div>
@@ -138,10 +161,10 @@ FROM ApexCodeCoverageAggregate</code></pre>
             </div>
             <div class="row">
               <input id="soql" type="text" value="SELECT ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered FROM ApexCodeCoverageAggregate" />
-              <button id="btnRun" class="primary">Run Tooling Query</button>
+              <buttonid="btnRun" class="primary" data-i18n="apextestcoverageviewer_run_tooling_query">Run Tooling Query</button>
             </div>
             <div class="hint">
-              <span class="warn">Important:</span> you must provide a valid token and have CORS allowed for your origin.
+              <spanclass="warn" data-i18n="apextestcoverageviewer_important">Important:</span> you must provide a valid token and have CORS allowed for your origin.
               This runs a GET to <code class="k">/services/data/vXX.X/tooling/query/?q=...</code> with <code class="k">Authorization: Bearer &lt;token&gt;</code>.
             </div>
           </div>
@@ -153,11 +176,11 @@ FROM ApexCodeCoverageAggregate</code></pre>
       <!-- Main table -->
       <section class="card">
         <header class="sticky">
-          <h2 style="flex:1">All results</h2>
+          <h2style="flex:1" data-i18n="apextestcoverageviewer_all_results">All results</h2>
           <div class="toolbar">
             <input type="text" id="search" placeholder="Search by name..." />
-            <button id="selectVisible" class="ghost">Select visible</button>
-            <button id="clearSelection" class="ghost">Clear selection</button>
+            <buttonid="selectVisible" class="ghost" data-i18n="apextestcoverageviewer_select_visible">Select visible</button>
+            <buttonid="clearSelection" class="ghost" data-i18n="apextestcoverageviewer_clear_selection">Clear selection</button>
           </div>
         </header>
         <div class="body">
@@ -167,9 +190,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
               <tr>
                 <th><input type="checkbox" id="checkAll" class="checkbox" title="Select all"/></th>
                 <th>Class/Trigger</th>
-                <th class="num">Covered</th>
-                <th class="num">Uncovered</th>
-                <th class="num">% Covered</th>
+                <thclass="num" data-i18n="apextestcoverageviewer_covered">Covered</th>
+                <thclass="num" data-i18n="apextestcoverageviewer_uncovered">Uncovered</th>
+                <thclass="num" data-i18n="apextestcoverageviewer_covered">% Covered</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -182,9 +205,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
     <!-- Refined table -->
     <section class="card" style="margin-top:16px">
       <header>
-        <h2 style="flex:1">Refined table (selected)</h2>
+        <h2style="flex:1" data-i18n="apextestcoverageviewer_refined_table_selected">Refined table (selected)</h2>
         <div class="toolbar">
-          <button id="exportCsv" class="ghost">Export CSV</button>
+          <buttonid="exportCsv" class="ghost" data-i18n="apextestcoverageviewer_export_csv">Export CSV</button>
           <span id="refinedTotals" class="muted small"></span>
         </div>
       </header>
@@ -193,9 +216,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
           <thead>
             <tr>
               <th>Class/Trigger</th>
-              <th class="num">Covered</th>
-              <th class="num">Uncovered</th>
-              <th class="num">% Covered</th>
+              <thclass="num" data-i18n="apextestcoverageviewer_covered">Covered</th>
+              <thclass="num" data-i18n="apextestcoverageviewer_uncovered">Uncovered</th>
+              <thclass="num" data-i18n="apextestcoverageviewer_covered">% Covered</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -349,9 +372,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
         tr.innerHTML = `
           <td></td>
           <td>${escapeHtml(r.name)}</td>
-          <td class="num">${r.covered}</td>
-          <td class="num">${r.uncovered}</td>
-          <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
+          <tdclass="num" data-i18n="apextestcoverageviewer_r_covered">${r.covered}</td>
+          <tdclass="num" data-i18n="apextestcoverageviewer_r_uncovered">${r.uncovered}</td>
+          <td class="num"><spanclass="badge" data-i18n="apextestcoverageviewer_r_pct_tofixed_2">${r.pct.toFixed(2)}%</span></td>
         `;
         tr.firstElementChild.appendChild(cb);
         mainBody.appendChild(tr);
@@ -377,9 +400,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
         tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
         tr.innerHTML = `
           <td>${escapeHtml(r.name)}</td>
-          <td class="num">${r.covered}</td>
-          <td class="num">${r.uncovered}</td>
-          <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
+          <tdclass="num" data-i18n="apextestcoverageviewer_r_covered">${r.covered}</td>
+          <tdclass="num" data-i18n="apextestcoverageviewer_r_uncovered">${r.uncovered}</td>
+          <td class="num"><spanclass="badge" data-i18n="apextestcoverageviewer_r_pct_tofixed_2">${r.pct.toFixed(2)}%</span></td>
         `;
         refinedBody.appendChild(tr);
       });
@@ -484,5 +507,99 @@ FROM ApexCodeCoverageAggregate</code></pre>
       URL.revokeObjectURL(url);
     });
   </script>
+<script id="i18n-extra" type="application/json">{"en": {"apextestcoverageviewer_source": "Source:", "apextestcoverageviewer_paste_json_csv_tsv": "Paste (JSON / CSV / TSV)", "apextestcoverageviewer_ea0b5aac68": "Salesforce Tooling API (manual auth required)", "apextestcoverageviewer_load_data": "Load Data", "apextestcoverageviewer_sample": "Sample", "apextestcoverageviewer_copy": "Copy", "apextestcoverageviewer_fill_textarea": "Fill textarea", "apextestcoverageviewer_important": "Important:", "apextestcoverageviewer_run_tooling_query": "Run Tooling Query", "apextestcoverageviewer_all_results": "All results", "apextestcoverageviewer_select_visible": "Select visible", "apextestcoverageviewer_clear_selection": "Clear selection", "apextestcoverageviewer_covered": "% Covered", "apextestcoverageviewer_uncovered": "Uncovered", "apextestcoverageviewer_refined_table_selected": "Refined table (selected)", "apextestcoverageviewer_export_csv": "Export CSV", "apextestcoverageviewer_r_covered": "${r.covered}", "apextestcoverageviewer_r_uncovered": "${r.uncovered}", "apextestcoverageviewer_r_pct_tofixed_2": "${r.pct.toFixed(2)}%"}, "pt": {"apextestcoverageviewer_source": "Source:", "apextestcoverageviewer_paste_json_csv_tsv": "Paste (JSON / CSV / TSV)", "apextestcoverageviewer_ea0b5aac68": "Salesforce Tooling API (manual auth required)", "apextestcoverageviewer_load_data": "Load Data", "apextestcoverageviewer_sample": "Sample", "apextestcoverageviewer_copy": "Copy", "apextestcoverageviewer_fill_textarea": "Fill textarea", "apextestcoverageviewer_important": "Important:", "apextestcoverageviewer_run_tooling_query": "Run Tooling Query", "apextestcoverageviewer_all_results": "All results", "apextestcoverageviewer_select_visible": "Select visible", "apextestcoverageviewer_clear_selection": "Clear selection", "apextestcoverageviewer_covered": "% Covered", "apextestcoverageviewer_uncovered": "Uncovered", "apextestcoverageviewer_refined_table_selected": "Refined table (selected)", "apextestcoverageviewer_export_csv": "Export CSV", "apextestcoverageviewer_r_covered": "${r.covered}", "apextestcoverageviewer_r_uncovered": "${r.uncovered}", "apextestcoverageviewer_r_pct_tofixed_2": "${r.pct.toFixed(2)}%"}}</script>
+
+<script>
+(function(){
+  const base = window.__i18nBase || {
+    en: {
+      title_portal: "Aplicativos Diversos",
+      subtitle_portal: "Central portal with links to all apps in this repository.",
+      open_app: "Open app",
+      app_apex_title: "Apex Test Coverage Viewer",
+      app_apex_desc: "Web tool to visualize Apex test coverage interactively and clearly.",
+      app_gantt_title: "Gantt Chart Editor",
+      app_gantt_desc: "Gantt chart editor (HTML + JavaScript) to plan and visualize tasks.",
+      app_revise_title: "Revise.it",
+      app_revise_desc: "Skeleton app to apply spaced repetition in daily life.",
+      lang_en: "English",
+      lang_pt: "Português",
+      theme_dark: "Dark",
+      theme_light: "Light"
+    },
+    pt: {
+      title_portal: "Aplicativos Diversos",
+      subtitle_portal: "Portal central com links para todos os apps deste repositório.",
+      open_app: "Abrir app",
+      app_apex_title: "Apex Test Coverage Viewer",
+      app_apex_desc: "Ferramenta web para visualizar cobertura de testes Apex de forma interativa e clara.",
+      app_gantt_title: "Gantt Chart Editor",
+      app_gantt_desc: "Editor de gráficos de Gantt (HTML + JavaScript) para planejar e visualizar tarefas.",
+      app_revise_title: "Revise.it",
+      app_revise_desc: "Skeleton de aplicação para aplicar técnica de revisão espaçada no dia a dia.",
+      lang_en: "English",
+      lang_pt: "Português",
+      theme_dark: "Escuro",
+      theme_light: "Claro"
+    }
+  };
+
+  function deepMerge(target, source){
+    for (const k in source){
+      if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k])){
+        target[k] = target[k] || {};
+        deepMerge(target[k], source[k]);
+      } else {
+        target[k] = source[k];
+      }
+    }
+    return target;
+  }
+
+  const extraEl = document.getElementById('i18n-extra');
+  if (extraEl){
+    try {
+      const extra = JSON.parse(extraEl.textContent || "{}");
+      deepMerge(base, extra);
+    } catch(e){}
+  }
+
+  let lang = localStorage.getItem('lang') || 'en';
+  let theme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+
+  function applyI18n(root=document){
+    root.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const t = (base[lang] && base[lang][key]) || "";
+      if (t) el.textContent = t;
+    });
+    document.querySelectorAll(".lang-toggle button").forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+    const icon = document.querySelector(".theme-toggle .icon");
+    if (icon){
+      icon.innerHTML = theme === 'dark'
+        ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>'
+        : '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zM1 13h3v-2H1v2zm10 10h2v-3h-2v3zm9-10v-2h-3v2h3zM6.76 19.16l-1.8 1.8 1.79 1.79 1.8-1.8-1.79-1.79zM11 1h2v3h-2V1zm7.07 3.05l-1.79 1.8 1.8 1.79 1.79-1.79-1.8-1.8zM4.22 10.99A7.78 7.78 0 1 0 12 4.22 7.78 7.78 0 0 0 4.22 11z"/></svg>';
+    }
+  }
+
+  window.setLanguage = function(newLang){
+    lang = newLang;
+    localStorage.setItem('lang', lang);
+    applyI18n();
+  };
+  window.toggleTheme = function(){
+    theme = theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    applyI18n();
+  };
+
+  document.addEventListener("DOMContentLoaded", applyI18n);
+})();
+</script>
+
 </body>
 </html>
