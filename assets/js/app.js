@@ -1,5 +1,17 @@
 
 (function(){
+
+  // Inline apps list to be file:// proof
+  const APPS = [{"id": "apextestcoverageviewer", "path": "ApexTestCoverageViewer", "title": {"en": "ApexTestCoverageViewer", "pt": "ApexTestCoverageViewer"}, "description": {"en": "Open the ApexTestCoverageViewer utility.", "pt": "Abrir o utilitário ApexTestCoverageViewer."}}, {"id": "ganttcharteditor", "path": "GanttChartEditor", "title": {"en": "GanttChartEditor", "pt": "GanttChartEditor"}, "description": {"en": "Open the GanttChartEditor utility.", "pt": "Abrir o utilitário GanttChartEditor."}}];
+  function renderApps(list, lang) {
+    list.innerHTML = (APPS || []).map(a => `
+      <a class="card" href="${a.path}/index.html">
+        <h3>$${(a.title && a.title[lang]) || (a.title && a.title['en']) || a.path}</h3>
+        <p>$${(a.description && a.description[lang]) || ''}</p>
+      </a>
+    `).join("");
+  }
+
   const IS_ROOT = !!document.getElementById('app-list');
   const PREFIX = IS_ROOT ? '' : '..';
   const LS_THEME = "wt_theme";
