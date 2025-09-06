@@ -1,0 +1,23 @@
+{
+  "app_title": "Various Apps",
+  "tagline": "Curated utilities with a single visual style.",
+  "language": "Language",
+  "theme": "Theme",
+  "dark": "Dark",
+  "light": "Light",
+  "apps": "Applications",
+  "open": "Open",
+  "back": "Back",
+  "contact": "Contact",
+  "madeby": "By Dhalmeida",
+  "root_index_hint": "Pick an app below. Defaults to dark theme. Toggle language in the header.",
+  "internal_index_hint": "This is an app page with the shared header, footer, translation and theme toggles.",
+  "footer_title": "About this project",
+  "version": "Version",
+  "author": "Author",
+  "email": "Email",
+  "website": "Website",
+  "rights": "All rights reserved.",
+  "company": "Dhalmeida",
+  "tagline_footer": "Utilities with a unified look and feel."
+}
