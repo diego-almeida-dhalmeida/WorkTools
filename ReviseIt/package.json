@@ -1,0 +1,19 @@
+{
+  "name": "revise-it",
+  "version": "1.0.0",
+  "description": "Skeleton de app para revisão espaçada (Revise.it)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "format": "prettier --write \"**/*.{js,ts,.jsx,.tsx,css,html,md}\""
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "vite": "^5.0.0"
+  }
+}
