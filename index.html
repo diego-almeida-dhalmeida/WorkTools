@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplicativos Diversos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .apps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #0056b3;
+    }
+    .card p {
+      margin: 0.5rem 0 1rem;
+      font-size: 0.95rem;
+    }
+    .card a {
+      text-decoration: none;
+      color: #fff;
+      background: #007bff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .card a:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aplicativos Diversos</h1>
+  <div class="apps">
+
+    <div class="card">
+      <h2>Apex Test Coverage Viewer</h2>
+      <p>Ferramenta web para visualizar cobertura de testes Apex de forma interativa e clara.</p>
+      <a href="./ApexTestCoverageViewer/index.html">Abrir App</a>
+    </div>
+
+    <div class="card">
+      <h2>Gantt Chart Editor</h2>
+      <p>Editor de gráficos de Gantt em HTML + JavaScript para planejar e visualizar tarefas.</p>
+      <a href="./GanttChartEditor/index.html">Abrir App</a>
+    </div>
+
+    <div class="card">
+      <h2>Revise.it</h2>
+      <p>Skeleton de aplicação para aplicar técnica de revisão espaçada no dia a dia.</p>
+      <a href="./ReviseIt/index.html">Abrir App</a>
+    </div>
+
+  </div>
+</body>
+</html>
