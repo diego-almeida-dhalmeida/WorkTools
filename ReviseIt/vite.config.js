@@ -1,8 +1,5 @@
 import { defineConfig } from 'vite';
 
-// Config padrão pensada para app HTML/JS simples.
-// - base './' garante que os assets funcionem mesmo abrindo o dist/ em ambiente estático.
-// - rollupOptions.input aponta para 'index.html' na raiz do app.
 export default defineConfig({
   base: './',
   root: '.',
@@ -11,8 +8,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    rollupOptions: {
-      input: 'index.html'
-    }
+    rollupOptions: { input: 'index.html' }
   }
 });
