@@ -1,13 +1,23 @@
 (function(){
-  // ===== WorkTools chrome v1.0.14 =====
-  var VERSION = "v1.0.14";
+  // ===== WorkTools chrome v1.0.16 =====
+  var VERSION = "v1.0.16";
   var BASE_PATH = "/WorkTools";
   var IS_FILE = location.protocol === "file:";
   var LS_THEME = "wt_theme";
   var LS_LANG  = "wt_lang";
+  // root apps registry (extend here if new tools are added)
+  var APPS = [
+    { id: "apextestcoverageviewer", path: "ApexTestCoverageViewer", 
+      title: { en: "ApexTestCoverageViewer", pt: "ApexTestCoverageViewer" },
+      description: { en: "Open the ApexTestCoverageViewer utility.", pt: "Abrir o utilitário ApexTestCoverageViewer." } },
+    { id: "ganttcharteditor", path: "GanttChartEditor",
+      title: { en: "GanttChartEditor", pt: "GanttChartEditor" },
+      description: { en: "Open the GanttChartEditor utility.", pt: "Abrir o utilitário GanttChartEditor." } }
+  ];
+
 
   // ultra-safe logger (no rest params)
-  var WTV = "WTv1.0.14";
+  var WTV = "WTv1.0.16";
   function WTL(){ try{ var a=[ "["+WTV+"]" ]; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.log.apply(console, a); }catch(e){} }
   window.addEventListener("error", function(e){ try{ console.error("["+WTV+":error]", e.message); }catch(_){}});
   window.addEventListener("unhandledrejection", function(e){ try{ console.error("["+WTV+":promise]", e.reason); }catch(_){}});
@@ -30,6 +40,19 @@
   }
 
   function buildChrome(strings){
+  function renderRoot(){
+    try{
+      var list = document.getElementById('app-list');
+      if (!list) return;
+      var lang = currentLang();
+      list.innerHTML = (APPS||[]).map(function(a){
+        var title = (a.title && (a.title[lang] || a.title.en)) || a.path;
+        var desc  = (a.description && (a.description[lang] || a.description.en)) || "";
+        return '<a class="card" href="'+a.path+'/index.html"><h3>'+title+'</h3><p>'+desc+'</p></a>';
+      }).join('');
+    }catch(e){ try{ console.error(e); }catch(_){ } }
+  }
+
     WTL("chrome:mount:start");
 
     if (isLight()) document.documentElement.classList.add("light");
@@ -108,6 +131,26 @@
       location.href = IS_FILE ? (__isRoot() ? "index.html" : "../index.html") : BASE_PATH + "/index.html";
     });
 
+    
+    // render root app list
+    if (__isRoot()) {
+      try {
+        var list = document.getElementById('app-list');
+        if (list) {
+          var lang = currentLang();
+          list.innerHTML = (APPS||[]).map(function(a){
+            var title = (a.title && (a.title[lang] || a.title.en)) || a.path;
+            var desc  = (a.description && (a.description[lang] || a.description.en)) || "";
+            return '<a class="card" href="'+a.path+'/index.html">'
+                   + '<h3>'+title+'</h3>'
+                   + '<p>'+desc+'</p>'
+                   + '</a>';
+          }).join('');
+        }
+      } catch(e) { try{ console.error(e); }catch(_){ } }
+    }
+
+    if (__isRoot()) { renderRoot(); }
     WTL("chrome:mount:end", {header: !!document.querySelector('header[data-wt]'), footer: !!document.querySelector('footer[data-wt]')});
   }
 

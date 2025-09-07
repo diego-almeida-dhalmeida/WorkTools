@@ -324,5 +324,32 @@ FROM ApexCodeCoverageAggregate</code></pre>
   </main>
   
 
+
+  <!-- v1.0.16 Apex sample fallback -->
+  <script>
+  (function(){
+    try{
+      var sampleData = "ApexClassOrTrigger,NumLinesCovered,NumLinesUncovered\nExampleClass,80,20\nExampleTrigger,30,5\n";
+      function attach(){
+        var btn = document.querySelector('[data-action="sample"], button#sample, .sample-btn');
+        var ta  = document.querySelector('textarea, #input, #data');
+        if (!btn || !ta) return false;
+        if (!btn._wtBound){
+          btn.addEventListener('click', function(ev){ try{ ev.preventDefault(); }catch(_){}
+            ta.value = sampleData;
+            var inputEvt;
+            try{ inputEvt = new Event('input'); }catch(_){ inputEvt = document.createEvent('Event'); inputEvt.initEvent('input', true, true); }
+            ta.dispatchEvent(inputEvt);
+            console.log('[WTv1.0.16:apex] sample fallback filled');
+          });
+          btn._wtBound = true;
+        }
+        return true;
+      }
+      if (!attach()){ document.addEventListener('DOMContentLoaded', attach); setTimeout(attach, 500); }
+    }catch(e){ try{ console.error(e); }catch(_){ } }
+  })();
+  </script>
+
 </body>
 </html>

@@ -2,6 +2,26 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.16",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Root apps list restored with resilient renderer; Apex 'Sample' button gets offline fallback."
+      ],
+      "changes_pt": [
+        "Lista de apps na raiz restaurada com renderer resiliente; botão 'Sample' do Apex ganha fallback offline."
+      ]
+    },
+    {
+      "version": "1.0.15",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Restore root app list: add APPS registry and renderer in app.js. Header/footer unchanged."
+      ],
+      "changes_pt": [
+        "Restaura a lista de apps na raiz: adiciona registro APPS e renderer no app.js. Cabeçalho/rodapé mantidos."
+      ]
+    },
+    {
       "version": "1.0.14",
       "date": "2025-09-07",
       "changes_en": [
