@@ -351,5 +351,189 @@ FROM ApexCodeCoverageAggregate</code></pre>
   })();
   </script>
 
+
+  
+  
+  
+  
+  
+  <!-- v1.0.22 apex: strict main/refined integration -->
+  <script>
+  (function(){
+    var TAG='WTv1.0.22:apex';
+    function L(){ try{ var a=['['+TAG+']']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.log.apply(console,a);}catch(e){} }
+    function W(){ try{ var a=['['+TAG+':WARN]']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.warn.apply(console,a);}catch(e){} }
+    function E(){ try{ var a=['['+TAG+':ERR]']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.error.apply(console,a);}catch(e){} }
+
+    // minimal styles for % bad
+    (function(){ var s=document.createElement('style'); s.textContent='.wt-pct-bad{background:rgba(255,0,0,.12)}'; document.head.appendChild(s); })();
+
+    function qs(s,r){ return (r||document).querySelector(s); }
+    function qsa(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+    // sample JSON pretty
+    var sampleObj=[{"ApexClassOrTrigger.Name":"AlphaTrigger","NumLinesCovered":5,"NumLinesUncovered":1},{"ApexClassOrTrigger.Name":"BetaController","NumLinesCovered":137,"NumLinesUncovered":16},{"ApexClassOrTrigger.Name":"GammaApp","NumLinesCovered":31,"NumLinesUncovered":11},{"ApexClassOrTrigger.Name":"DeltaUtils","NumLinesCovered":92,"NumLinesUncovered":446},{"ApexClassOrTrigger.Name":"EpsilonHours","NumLinesCovered":39,"NumLinesUncovered":1},{"ApexClassOrTrigger.Name":"OmegaHandler","NumLinesCovered":44,"NumLinesUncovered":59}];
+    var sampleJSON=JSON.stringify(sampleObj,null,2);
+
+    function sanitizeText(v){ if(!v) return ''; v=v.replace(/\r\n?/g,'\n').replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/^\ufeff/,''); return v.trim(); }
+    function tryParseJSON(v){
+      var s=sanitizeText(v);
+      try{ return JSON.parse(s);}catch(e1){
+        try{ if(/^".*"$/.test(s)){ s=s.slice(1,-1).replace(/\\"/g,'"'); return JSON.parse(s); } }catch(e2){}
+        E('json:parse fail'); return null;
+      }
+    }
+    function parseDelim(text, sep){
+      var rows=[], r=[], inQ=false, cur='';
+      for(var i=0;i<text.length;i++){ var ch=text[i],n=text[i+1];
+        if(ch=='"'){ if(inQ&&n=='"'){ cur+='"'; i++; } else inQ=!inQ; }
+        else if(ch==sep && !inQ){ r.push(cur); cur=''; }
+        else if((ch=='\n'||ch=='\r') && !inQ){ if(cur!==''||r.length){ r.push(cur); rows.push(r); r=[]; cur=''; } }
+        else cur+=ch;
+      }
+      if(cur!==''||r.length){ r.push(cur); rows.push(r); }
+      return rows;
+    }
+    function normalizeFromJSON(arr){
+      if(!Array.isArray(arr)) return [];
+      return arr.map(function(it){
+        var name=(it['ApexClassOrTrigger.Name']||(it.ApexClassOrTrigger&&it.ApexClassOrTrigger.Name)||it.Name||'').toString();
+        var cov=Number(it.NumLinesCovered||0), unc=Number(it.NumLinesUncovered||0);
+        var pct=(cov+unc>0)? Math.round(cov*1000/(cov+unc))/10 : 0;
+        return {name:name, covered:cov, uncovered:unc, pct:pct};
+      });
+    }
+    function normalizeFromRows(rows){
+      if(!rows||!rows.length) return [];
+      var hdr=rows[0].map(function(h){ return (h||'').toLowerCase(); });
+      function idx(k){ var i=hdr.indexOf(k); if(i>=0) return i; for(var j=0;j<hdr.length;j++){ if(hdr[j].indexOf(k)>=0) return j; } return -1; }
+      var iName=idx('apexclassortrigger.name'); if(iName<0) iName=idx('apexclassortrigger'); if(iName<0) iName=idx('name');
+      var iCov=idx('numlinescovered'), iUnc=idx('numlinesuncovered');
+      var out=[]; for(var i=1;i<rows.length;i++){ var r=rows[i]; if(!r||!r.length) continue;
+        var name=(r[iName]||'').toString(), cov=Number(r[iCov]||0), unc=Number(r[iUnc]||0);
+        var pct=(cov+unc>0)? Math.round(cov*1000/(cov+unc))/10 : 0;
+        out.push({name:name, covered:cov, uncovered:unc, pct:pct});
+      } return out;
+    }
+
+    function getTbody(id){ var el=qs('#'+id+' tbody'); return el||null; }
+
+    function renderMain(items){
+      var tb=getTbody('mainTable');
+      if(!tb){ W('mainTable tbody not found'); return false; }
+      tb.innerHTML='';
+      items.forEach(function(it){
+        var tr=document.createElement('tr');
+        var pctClass = (it.pct<80)? 'wt-pct-bad' : '';
+        tr.innerHTML = '<td><input type="checkbox" class="wt-sel" data-name="'+it.name.replace(/"/g,'&quot;')+'" data-covered="'+it.covered+'" data-uncovered="'+it.uncovered+'" data-pct="'+it.pct+'"></td>'
+                     + '<td>'+it.name+'</td>'
+                     + '<td>'+it.covered+'</td>'
+                     + '<td>'+it.uncovered+'</td>'
+                     + '<td class="'+pctClass+'">'+it.pct+'</td>';
+        tb.appendChild(tr);
+      });
+      L('render:main', {rows: items.length});
+      return true;
+    }
+
+    function renderRefinedFromSelection(){
+      var tb = getTbody('refinedTable'); if(!tb){ W('refinedTable tbody not found'); return; }
+      tb.innerHTML='';
+      var selected = qsa('#mainTable .wt-sel:checked').map(function(c){
+        return { name:c.dataset.name, covered:Number(c.dataset.covered), uncovered:Number(c.dataset.uncovered), pct:Number(c.dataset.pct) };
+      });
+      selected.forEach(function(it){
+        var pctClass = (it.pct<80)? 'wt-pct-bad' : '';
+        var tr=document.createElement('tr');
+        tr.innerHTML = '<td>'+it.name+'</td><td>'+it.covered+'</td><td>'+it.uncovered+'</td><td class="'+pctClass+'">'+it.pct+'</td>';
+        tb.appendChild(tr);
+      });
+      L('render:refined', {rows:selected.length});
+      // bind Export CSV to selected dataset
+      var btn = qsa('#apex-app button, #apex-app a').find(function(b){ var t=(b.textContent||'').toLowerCase(); return t.indexOf('export')>=0 && t.indexOf('csv')>=0; });
+      if(btn && !btn._wtCsv22){
+        btn.addEventListener('click', function(ev){
+          try{ ev.preventDefault(); }catch(_){}
+          var lines=['Class/Trigger,Covered,Uncovered,% Covered'].concat(selected.map(function(it){ return [it.name,it.covered,it.uncovered,it.pct].join(','); }));
+          var blob=new Blob([lines.join('\\n')], {type:'text/csv'}); var a=document.createElement('a'); a.download='coverage.csv'; a.href=URL.createObjectURL(blob); a.click();
+        });
+        btn._wtCsv22=true; L('exportCSV:bound:selected', {rows:selected.length});
+      }
+    }
+
+    function wireSelectionSync(){
+      var main = qs('#mainTable'); if(!main) return;
+      if(main._wtSelBound) return;
+      main.addEventListener('change', function(e){
+        var t=e.target; if(!t.classList.contains('wt-sel')) return;
+        renderRefinedFromSelection();
+      });
+      main._wtSelBound=true; L('selection:bound');
+    }
+
+    function computeBadges(items){
+      var cov=0, unc=0; items.forEach(function(it){ cov+=it.covered; unc+=it.uncovered; });
+      var total=cov+unc, pct=(total>0? Math.round(cov*1000/total)/10 : 0);
+      function set(id, text){ var el=qs('#'+id); if(el) el.textContent=text; }
+      set('metricTotal', total);
+      set('metricCovered', cov);
+      set('metricUncovered', unc);
+      set('metricOverall', pct+'%');
+      L('metrics', {total:total,cov:cov,unc:unc,pct:pct});
+    }
+
+    function runFromTextarea(){
+      var ta = qs('#inputRaw, #apex-app textarea, textarea'); if(!ta){ W('no textarea'); return; }
+      var raw = sanitizeText(ta.value||''); if(!raw){ W('textarea empty'); return; }
+      var items=null;
+      if (raw.trim()[0]==='['){ var a=tryParseJSON(raw); if(a) items = normalizeFromJSON(a); }
+      if (!items){ if (raw.indexOf('\\t')>=0) items = normalizeFromRows(parseDelim(raw,'\\t')); else items = normalizeFromRows(parseDelim(raw,',')); }
+      items = items||[];
+      computeBadges(items);
+      if (!renderMain(items)){ // if #mainTable not found, fallback to previous behavior
+        var host = qs('#wt-fallback-results') || (function(){ var d=document.createElement('div'); d.id='wt-fallback-results'; d.style.margin='16px'; return (qs('#apex-app')||document.body).appendChild(d); })();
+        host.innerHTML = '<pre>'+JSON.stringify(items,null,2)+'</pre>';
+        L('fallback:dump', {rows: items.length});
+      } else {
+        wireSelectionSync();
+        renderRefinedFromSelection();
+      }
+    }
+
+    function forcePasteSource(){
+      var s = qs('#source'); if (!s) return;
+      var opt = qsa('option', s).find(function(o){ return /paste/i.test(o.value) || /paste/i.test(o.textContent||''); });
+      if (opt){ s.value = opt.value; try{ s.dispatchEvent(new Event('change',{bubbles:true})); }catch(_){ var ev=document.createEvent('Event'); ev.initEvent('change', true, true); s.dispatchEvent(ev); } }
+      L('forcePasteSource', {value: s.value});
+    }
+
+    function attach(){
+      var root = qs('#apex-app') || document.body;
+      L('attach', {buttons:qsa('button',root).length,selects:qsa('select',root).length,inputs:qsa('input,textarea',root).length});
+      var btnSample = qs('#btnSample, [data-action=sample]');
+      var btnLoad   = qs('#btnLoad, [data-action=load]');
+      var ta        = qs('#inputRaw, #apex-app textarea, textarea');
+
+      if (btnSample && !btnSample._wt22){
+        btnSample.addEventListener('click', function(ev){
+          try{ ev.preventDefault(); }catch(_){}
+          forcePasteSource();
+          if (ta){ ta.value = sampleJSON; try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){ var ev=document.createEvent('Event'); ev.initEvent('input', true, true); ta.dispatchEvent(ev);} }
+          if (btnLoad){ try{ btnLoad.click(); }catch(_){ runFromTextarea(); } } else { runFromTextarea(); }
+          L('sample:json-filled');
+        });
+        btnSample._wt22=true; L('sample:bound22');
+      }
+      if (btnLoad && !btnLoad._wt22){
+        btnLoad.addEventListener('click', function(){ setTimeout(runFromTextarea, 120); });
+        btnLoad._wt22=true; L('load:bound22');
+      }
+    }
+
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', attach); else attach();
+    setTimeout(attach, 400); setTimeout(attach, 1200);
+  })();
+  </script>
+
 </body>
 </html>

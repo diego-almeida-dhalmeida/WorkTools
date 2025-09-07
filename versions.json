@@ -2,6 +2,76 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.23",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "Sample do Apex anonimizado (nomes aleatórios)."
+      ],
+      "changes_en": [
+        "Apex sample anonymized (randomized names)."
+      ]
+    },
+    {
+      "version": "1.0.22",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex fallback now targets #mainTable for all rows and #refinedTable for selections; selection sync and CSV export hooked; badge v1.0.22."
+      ],
+      "changes_pt": [
+        "Fallback do Apex agora preenche #mainTable (todos) e #refinedTable (selecionados); sincronia de seleção e exportação CSV; badge v1.0.22."
+      ]
+    },
+    {
+      "version": "1.0.21",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex: fallback now fills *native* table bodies (not separate card), highlights pct<80, binds Export CSV if needed; badge v1.0.21."
+      ],
+      "changes_pt": [
+        "Apex: fallback agora preenche as tabelas *nativas* (não card separado), destaca %<80, exporta CSV se necessário; badge v1.0.21."
+      ]
+    },
+    {
+      "version": "1.0.20",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex: Sample now fills pretty JSON (no escapes); sanitizer fixes pasted JSON; Load fallback kept; badge v1.0.20."
+      ],
+      "changes_pt": [
+        "Apex: Sample agora preenche JSON legível (sem \\n visíveis); sanitizador corrige JSON colado; fallback do Load mantido; badge v1.0.20."
+      ]
+    },
+    {
+      "version": "1.0.19",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex: correct Sample fills JSON; Load Data fallback parses JSON/CSV/TSV and renders table; badge v1.0.19."
+      ],
+      "changes_pt": [
+        "Apex: Sample agora preenche JSON; fallback do Load parseia JSON/CSV/TSV e renderiza tabela; badge v1.0.19."
+      ]
+    },
+    {
+      "version": "1.0.18",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex strong fallback: force 'Paste' source, auto-click Load Data after Sample, CSV renderer fallback; badge v1.0.18."
+      ],
+      "changes_pt": [
+        "Fallback forte no Apex: força fonte 'Paste', auto-clica 'Load Data' após Sample, renderizador CSV de contingência; badge v1.0.18."
+      ]
+    },
+    {
+      "version": "1.0.17",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Apex deep-probe console logs (click/change/input delegation, sample fallback); bump badge to v1.0.17."
+      ],
+      "changes_pt": [
+        "Deep-probe de logs no Apex (delegação de click/change/input, fallback do Sample); badge v1.0.17."
+      ]
+    },
+    {
       "version": "1.0.16",
       "date": "2025-09-07",
       "changes_en": [
