@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Versions</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <main style="max-width:960px; margin:24px auto; padding:0 16px;">
+    <h2 id="title">📦 Versions</h2>
+    <p class="notice" id="hint">Release notes loaded from JSON. Works offline via inline fallback.</p>
+    <div id="versions"></div>
+  </main>
+
+  <!-- Inline fallback for file:// -->
+  <script id="versions-data" type="application/json"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    (function(){
+      const container = document.getElementById('versions');
+      const lang = localStorage.getItem('wt_lang') || 'en';
+      async function loadData(){
+        const inline = document.getElementById('versions-data');
+        if(inline && inline.textContent.trim().length){
+          return JSON.parse(inline.textContent);
+        }
+        try{
+          const res = await fetch('versions.json');
+          return await res.json();
+        }catch(e){
+          return {"versions":[]};
+        }
+      }
+      function render(data){
+        if(!data || !data.versions) { container.innerHTML = '<p class="notice">No versions found.</p>'; return; }
+        container.innerHTML = data.versions.map(v => {
+          const items = (lang==='pt' ? v.changes_pt : v.changes_en) || [];
+          return `<div class="card" style="margin:12px 0">
+            <h3 style="margin:0 0 6px 0">v${v.version} <span class="notice">(${v.date})</span></h3>
+            <ul style="margin:0; padding-left:18px">${items.map(i=>`<li>${i}</li>`).join('')}</ul>
+          </div>`;
+        }).join('');
+      }
+      loadData().then(render);
+    })();
+  </script>
+</body>
+</html>

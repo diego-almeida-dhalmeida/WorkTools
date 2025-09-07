@@ -1,0 +1,23 @@
+{
+  "project": "WorkTools",
+  "versions": [
+    {
+      "version": "1.0.2",
+      "date": "2025-09-06",
+      "changes_en": [
+        "Unified header and footer across all apps",
+        "Dark/light theme toggle with persistence",
+        "Language switch EN/PT",
+        "Centralized CSS/JS/I18n assets",
+        "Inline apps list to support file:// usage"
+      ],
+      "changes_pt": [
+        "Cabeçalho e rodapé unificados em todos os apps",
+        "Alternância de tema claro/escuro com persistência",
+        "Alternância de idioma EN/PT",
+        "Assets centralizados de CSS/JS/I18n",
+        "Lista de apps embutida para funcionar via file://"
+      ]
+    }
+  ]
+}
