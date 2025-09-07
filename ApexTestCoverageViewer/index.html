@@ -357,22 +357,118 @@ FROM ApexCodeCoverageAggregate</code></pre>
   
   
   
-  <!-- v1.0.22 apex: strict main/refined integration -->
+  
+  
+  <!-- v1.0.25 apex: unified fallback + threshold/i18n + logs -->
+  <style>
+    /* numeric alignment */
+    #mainTable th:nth-child(3), #mainTable th:nth-child(4), #mainTable th:nth-child(5),
+    #mainTable td.num, #refinedTable th:nth-child(2), #refinedTable th:nth-child(3), #refinedTable th:nth-child(4),
+    #refinedTable td.num { text-align: right; }
+    /* row highlight */
+.wt-row-bad { outline: 1px solid rgba(255,23,68,.45) !important; background: inherit !important; }
+:is(html.dark, .dark) .wt-row-bad { outline: 1px solid rgba(255,23,68,.6) !important; background: transparent !important; }
+/* percent pill */
+.wt-pill{display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.85rem; line-height:1; font-weight:600; letter-spacing:.2px;}
+.wt-pill.wt-good{ background:#1fae51; color:#08140c; }
+.wt-pill.wt-bad{ background:#ff1744; color:#19070b; }
+:is(html.dark, .dark) .wt-pill.wt-good{ background:#1de9b6; color:#04120f; }
+:is(html.dark, .dark) .wt-pill.wt-bad{ background:#ff1744; color:#140409; }
+/* controls */
+    .wt-controls { display:flex; align-items:center; gap:8px; margin:8px 0 4px 0; font-size: .95rem; opacity:.95;}
+    .wt-controls label{opacity:.9}
+    .wt-controls select{background:transparent; color:inherit; border:1px solid currentColor; padding:4px 8px; border-radius:6px;}
+  </style>
   <script>
   (function(){
-    var TAG='WTv1.0.22:apex';
+    var TAG='WTv1.0.25:apex';
     function L(){ try{ var a=['['+TAG+']']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.log.apply(console,a);}catch(e){} }
     function W(){ try{ var a=['['+TAG+':WARN]']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.warn.apply(console,a);}catch(e){} }
     function E(){ try{ var a=['['+TAG+':ERR]']; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.error.apply(console,a);}catch(e){} }
 
-    // minimal styles for % bad
-    (function(){ var s=document.createElement('style'); s.textContent='.wt-pct-bad{background:rgba(255,0,0,.12)}'; document.head.appendChild(s); })();
-
     function qs(s,r){ return (r||document).querySelector(s); }
     function qsa(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+    function t(el){ return (el && (el.textContent||'').trim()) || ''; }
 
-    // sample JSON pretty
-    var sampleObj=[{"ApexClassOrTrigger.Name":"AlphaTrigger","NumLinesCovered":5,"NumLinesUncovered":1},{"ApexClassOrTrigger.Name":"BetaController","NumLinesCovered":137,"NumLinesUncovered":16},{"ApexClassOrTrigger.Name":"GammaApp","NumLinesCovered":31,"NumLinesUncovered":11},{"ApexClassOrTrigger.Name":"DeltaUtils","NumLinesCovered":92,"NumLinesUncovered":446},{"ApexClassOrTrigger.Name":"EpsilonHours","NumLinesCovered":39,"NumLinesUncovered":1},{"ApexClassOrTrigger.Name":"OmegaHandler","NumLinesCovered":44,"NumLinesUncovered":59}];
+    // ==== i18n + threshold ====
+    var LS_KEY='wt_cov_threshold';
+    var threshold = Number(localStorage.getItem(LS_KEY)||80);
+    var STR={
+      en:{ thr:'Coverage threshold', thrSuffix:'%', hint:'Rows below the threshold are highlighted.' },
+      pt:{ thr:'Limite de cobertura', thrSuffix:'%', hint:'Linhas abaixo do limite ficam destacadas.' }
+    };
+    function getLang(){
+      var lang = document.documentElement.getAttribute('lang')||'en';
+      var chip = qs('#wt-lang-current'); if (chip && chip.textContent.trim().toLowerCase()==='pt') lang='pt';
+      return (lang==='pt')?'pt':'en';
+    }
+    function T(k){ var l=getLang(); return (STR[l]&&STR[l][k])||STR.en[k]||k; }
+    function formatPct(v){ var n = Number(v||0); return n.toFixed(1)+'%'; }
+    function setThreshold(v){ threshold = Number(v||80); localStorage.setItem(LS_KEY, threshold); applyRowStyles(); }
+
+    function ensureControls(){
+      if (qs('#wt-threshold')) return;
+      var host = (function(){ var mt = qs('#mainTable'); if (mt) return mt.parentElement; return qs('#apex-app')||document.body; })();
+      var div = document.createElement('div'); div.className='wt-controls'; div.id='wt-threshold';
+      var sel = document.createElement('select'); sel.id='wt-thr-sel';
+      [75,80,85,90,95].forEach(function(v){ var opt=document.createElement('option'); opt.value=v; opt.textContent=v+STR.en.thrSuffix; sel.appendChild(opt); });
+      sel.value = String(threshold);
+      sel.addEventListener('change', function(e){ setThreshold(e.target.value); });
+      var label = document.createElement('label'); label.setAttribute('for','wt-thr-sel'); label.textContent=T('thr');
+      var hint = document.createElement('span'); hint.style.opacity='.7'; hint.style.marginLeft='6px'; hint.textContent=T('hint');
+      div.appendChild(label); div.appendChild(sel); div.appendChild(hint);
+      host.insertBefore(div, host.firstChild);
+      L('controls:mounted', {threshold: threshold});
+    }
+
+    function applyRowStyles(){
+  qsa('#mainTable tbody tr').forEach(function(tr){
+    var pctCell = tr.querySelector('td:last-child'); if(!pctCell) return;
+    var span = pctCell.querySelector('.wt-pill');
+    var pctText = span ? span.textContent : (pctCell.textContent||'');
+    var pct = parseFloat((pctText||'').replace('%','').trim());
+    if (isNaN(pct)) { var c = tr.querySelector('input.wt-sel'); if (c && c.dataset && c.dataset.pct) pct = Number(c.dataset.pct); }
+    if (pct < threshold) { tr.classList.add('wt-row-bad'); if(span){ span.classList.add('wt-bad'); span.classList.remove('wt-good'); } }
+    else { tr.classList.remove('wt-row-bad'); if(span){ span.classList.remove('wt-bad'); span.classList.add('wt-good'); } }
+  });
+  qsa('#refinedTable tbody tr').forEach(function(tr){
+    var pctCell = tr.querySelector('td:last-child'); if(!pctCell) return;
+    var span = pctCell.querySelector('.wt-pill');
+    var pctText = span ? span.textContent : (pctCell.textContent||'');
+    var pct = parseFloat((pctText||'').replace('%','').trim());
+    if (pct < threshold) { tr.classList.add('wt-row-bad'); if(span){ span.classList.add('wt-bad'); span.classList.remove('wt-good'); } }
+    else { tr.classList.remove('wt-row-bad'); if(span){ span.classList.remove('wt-bad'); span.classList.add('wt-good'); } }
+  });
+  L('styles:applied', {threshold:threshold});
+}
+
+    function patchPctFormatting(){
+      qsa('#mainTable tbody tr, #refinedTable tbody tr').forEach(function(tr){
+        var c = tr.querySelector('td:last-child'); if(!c) return;
+        var txt = (c.textContent||'').trim();
+        if (txt && txt.indexOf('%')<0 && !isNaN(parseFloat(txt))) c.textContent = formatPct(parseFloat(txt));
+      });
+    }
+
+    function observeTables(){
+      var obs = new MutationObserver(function(){
+        patchPctFormatting(); applyRowStyles();
+      });
+      var mt = qs('#mainTable tbody'); if (mt) obs.observe(mt, {childList:true, subtree:true, characterData:true});
+      var rt = qs('#refinedTable tbody'); if (rt) obs.observe(rt, {childList:true, subtree:true, characterData:true});
+      patchPctFormatting(); applyRowStyles();
+    }
+
+    // ==== fallback integration (from v1.0.22) ====
+    // anonymized sample
+    var sampleObj=[
+      {"ApexClassOrTrigger.Name":"AlphaTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
+      {"ApexClassOrTrigger.Name":"BetaController","NumLinesCovered":137,"NumLinesUncovered":16},
+      {"ApexClassOrTrigger.Name":"GammaApp","NumLinesCovered":31,"NumLinesUncovered":11},
+      {"ApexClassOrTrigger.Name":"DeltaUtils","NumLinesCovered":92,"NumLinesUncovered":446},
+      {"ApexClassOrTrigger.Name":"EpsilonHours","NumLinesCovered":39,"NumLinesUncovered":1},
+      {"ApexClassOrTrigger.Name":"OmegaHandler","NumLinesCovered":44,"NumLinesUncovered":59}
+    ];
     var sampleJSON=JSON.stringify(sampleObj,null,2);
 
     function sanitizeText(v){ if(!v) return ''; v=v.replace(/\r\n?/g,'\n').replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/^\ufeff/,''); return v.trim(); }
@@ -424,14 +520,15 @@ FROM ApexCodeCoverageAggregate</code></pre>
       tb.innerHTML='';
       items.forEach(function(it){
         var tr=document.createElement('tr');
-        var pctClass = (it.pct<80)? 'wt-pct-bad' : '';
+        var pctClass = (it.pct<80)? 'wt-row-bad' : '';
         tr.innerHTML = '<td><input type="checkbox" class="wt-sel" data-name="'+it.name.replace(/"/g,'&quot;')+'" data-covered="'+it.covered+'" data-uncovered="'+it.uncovered+'" data-pct="'+it.pct+'"></td>'
                      + '<td>'+it.name+'</td>'
-                     + '<td>'+it.covered+'</td>'
-                     + '<td>'+it.uncovered+'</td>'
-                     + '<td class="'+pctClass+'">'+it.pct+'</td>';
+                     + '<td class="num">'+it.covered+'</td>'
+                     + '<td class="num">'+it.uncovered+'</td>'
+                     + '<td class="num '+pctClass+'">'+formatPct(it.pct)+'</td>';
         tb.appendChild(tr);
       });
+      document.dispatchEvent(new CustomEvent('wt-apex-render'));
       L('render:main', {rows: items.length});
       return true;
     }
@@ -443,21 +540,22 @@ FROM ApexCodeCoverageAggregate</code></pre>
         return { name:c.dataset.name, covered:Number(c.dataset.covered), uncovered:Number(c.dataset.uncovered), pct:Number(c.dataset.pct) };
       });
       selected.forEach(function(it){
-        var pctClass = (it.pct<80)? 'wt-pct-bad' : '';
+        var pctClass = (it.pct<threshold)? 'wt-row-bad' : '';
         var tr=document.createElement('tr');
-        tr.innerHTML = '<td>'+it.name+'</td><td>'+it.covered+'</td><td>'+it.uncovered+'</td><td class="'+pctClass+'">'+it.pct+'</td>';
+        tr.innerHTML = '<td>'+it.name+'</td><td class="num">'+it.covered+'</td><td class="num">'+it.uncovered+'</td><td class="num '+pctClass+'">'+formatPct(it.pct)+'</td>';
         tb.appendChild(tr);
       });
+      document.dispatchEvent(new CustomEvent('wt-apex-render'));
       L('render:refined', {rows:selected.length});
       // bind Export CSV to selected dataset
       var btn = qsa('#apex-app button, #apex-app a').find(function(b){ var t=(b.textContent||'').toLowerCase(); return t.indexOf('export')>=0 && t.indexOf('csv')>=0; });
-      if(btn && !btn._wtCsv22){
+      if(btn && !btn._wtCsv25){
         btn.addEventListener('click', function(ev){
           try{ ev.preventDefault(); }catch(_){}
-          var lines=['Class/Trigger,Covered,Uncovered,% Covered'].concat(selected.map(function(it){ return [it.name,it.covered,it.uncovered,it.pct].join(','); }));
+          var lines=['Class/Trigger,Covered,Uncovered,% Covered'].concat(selected.map(function(it){ return [it.name,it.covered,it.uncovered,it.pct.toFixed(1)+'%'].join(','); }));
           var blob=new Blob([lines.join('\\n')], {type:'text/csv'}); var a=document.createElement('a'); a.download='coverage.csv'; a.href=URL.createObjectURL(blob); a.click();
         });
-        btn._wtCsv22=true; L('exportCSV:bound:selected', {rows:selected.length});
+        btn._wtCsv25=true; L('exportCSV:bound:selected', {rows:selected.length});
       }
     }
 
@@ -490,7 +588,7 @@ FROM ApexCodeCoverageAggregate</code></pre>
       if (!items){ if (raw.indexOf('\\t')>=0) items = normalizeFromRows(parseDelim(raw,'\\t')); else items = normalizeFromRows(parseDelim(raw,',')); }
       items = items||[];
       computeBadges(items);
-      if (!renderMain(items)){ // if #mainTable not found, fallback to previous behavior
+      if (!renderMain(items)){
         var host = qs('#wt-fallback-results') || (function(){ var d=document.createElement('div'); d.id='wt-fallback-results'; d.style.margin='16px'; return (qs('#apex-app')||document.body).appendChild(d); })();
         host.innerHTML = '<pre>'+JSON.stringify(items,null,2)+'</pre>';
         L('fallback:dump', {rows: items.length});
@@ -514,7 +612,7 @@ FROM ApexCodeCoverageAggregate</code></pre>
       var btnLoad   = qs('#btnLoad, [data-action=load]');
       var ta        = qs('#inputRaw, #apex-app textarea, textarea');
 
-      if (btnSample && !btnSample._wt22){
+      if (btnSample && !btnSample._wt25){
         btnSample.addEventListener('click', function(ev){
           try{ ev.preventDefault(); }catch(_){}
           forcePasteSource();
@@ -522,16 +620,21 @@ FROM ApexCodeCoverageAggregate</code></pre>
           if (btnLoad){ try{ btnLoad.click(); }catch(_){ runFromTextarea(); } } else { runFromTextarea(); }
           L('sample:json-filled');
         });
-        btnSample._wt22=true; L('sample:bound22');
+        btnSample._wt25=true; L('sample:bound25');
       }
-      if (btnLoad && !btnLoad._wt22){
+      if (btnLoad && !btnLoad._wt25){
         btnLoad.addEventListener('click', function(){ setTimeout(runFromTextarea, 120); });
-        btnLoad._wt22=true; L('load:bound22');
+        btnLoad._wt25=true; L('load:bound25');
       }
     }
 
-    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', attach); else attach();
-    setTimeout(attach, 400); setTimeout(attach, 1200);
+    function init(){
+      ensureControls();
+      observeTables();
+      attach();
+    }
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+    setTimeout(init, 500);
   })();
   </script>
 

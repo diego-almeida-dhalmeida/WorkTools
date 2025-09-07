@@ -2,6 +2,36 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.26",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "Apex: pílulas de % (verde/vermelho) e borda sutil nas linhas abaixo do limite; mantém threshold/i18n. Layout igual ao estilo antigo."
+      ],
+      "changes_en": [
+        "Apex: % pills (green/red) and subtle row outline below threshold; keeps threshold/i18n. Layout matches previous style."
+      ]
+    },
+    {
+      "version": "1.0.25",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "FIX: Sample/Load voltaram a funcionar (bloco unificado). Mantidos threshold, i18n, % e alinhamento. Logs restaurados."
+      ],
+      "changes_en": [
+        "FIX: Restored Sample/Load fallback (unified block). Kept threshold, i18n, % formatting, alignment. Logs restored."
+      ]
+    },
+    {
+      "version": "1.0.24",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "Apex: seletor do limite (75–95), linha inteira vermelha (neon no dark), % com símbolo, alinhamento numérico, i18n EN/PT nos controles."
+      ],
+      "changes_en": [
+        "Apex: threshold selector (75–95), full-row neon red in dark, % suffix, numeric alignment, EN/PT i18n for controls."
+      ]
+    },
+    {
       "version": "1.0.23",
       "date": "2025-09-07",
       "changes_pt": [
