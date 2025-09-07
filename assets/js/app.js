@@ -1,5 +1,5 @@
 (function(){
-  const VERSION = "v1.0.8";
+  const VERSION = "v1.0.9";
   const BASE_PATH = "/WorkTools";
   const IS_FILE = location.protocol === "file:";
   const LS_THEME = "wt_theme";

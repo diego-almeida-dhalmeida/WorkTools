@@ -497,5 +497,59 @@ FROM ApexCodeCoverageAggregate</code></pre>
     });
   
   </script>
+
+  <script>
+  (function(){
+    var lang = (localStorage.getItem('wt_lang')||'en');
+    var isFile = location.protocol==='file:';
+    var strings = lang==='pt' ? {
+      app_title:'Aplicativos Diversos', back:'Voltar', contact:'Contato', version:'Versão'
+    } : { app_title:'Various Apps', back:'Back', contact:'Contact', version:'Version' };
+    function ensureChrome(){
+      if (document.querySelector('header')) return true;
+      var h=document.createElement('header');
+      var rootHref = isFile ? '../index.html' : '/WorkTools/index.html';
+      h.innerHTML = '<div class="container" style="display:flex;align-items:center;gap:16px">'
+        + '<div class="brand">'
+        +   '<a href="../versions.html" class="badge">v1.0.9</a>'
+        +   '<span id="title">'+strings.app_title+'</span>'
+        + '</div>'
+        + '<div class="controls"><div class="toolbar">'
+        +   '<button class="iconbtn back-btn" data-action="back" title="'+strings.back+'"><span>←</span><span>'+strings.back+'</span></button>'
+        +   '<a class="iconbtn" href="mailto:diego.almeida@dhalmeida.com" title="'+strings.contact+'"><span>'+strings.contact+'</span></a>'
+        + '</div></div></div>';
+      document.body.prepend(h);
+      var f=document.createElement('footer');
+      f.innerHTML = '<div class="container">'
+        + '<div class="footgrid"><div><h4>About</h4><div class="kvs">'
+        + '<div class="row"><span class="key">'+strings.version+'</span><span class="val"><a href="../versions.html">v1.0.9</a></span></div>'
+        + '</div></div><div><h4>'+strings.contact+'</h4><div class="kvs">'
+        + '<div class="row"><span class="key">Email</span><span class="val"><a href="mailto:diego.almeida@dhalmeida.com">diego.almeida@dhalmeida.com</a></span></div>'
+        + '</div></div></div><div class="copyright">© <span class="sig">By Dhalmeida</span>. All rights reserved.</div></div>';
+      document.body.appendChild(f);
+      // listeners
+      var backBtn = h.querySelector('[data-action=back]');
+      if (backBtn) backBtn.addEventListener('click', function(){
+        try{ if (document.referrer && document.referrer !== location.href){ history.back(); return; } }catch(e){}
+        location.href = rootHref;
+      });
+      return false;
+    }
+    function tick(){
+      if (window.WT && WT.init){
+        try{ WT.init(); }catch(e){}
+        if (!document.querySelector('header')) ensureChrome();
+        return;
+      }
+      if (!ensureChrome()){
+        setTimeout(function(){
+          if (!(window.WT && document.querySelector('header'))) ensureChrome();
+        }, 120);
+      }
+    }
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  })();
+  </script>
+
 </body>
 </html>
