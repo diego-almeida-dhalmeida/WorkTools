@@ -1,0 +1,23 @@
+{
+  "app_title": "Aplicativos Diversos",
+  "tagline": "Utilitários organizados com um único estilo visual.",
+  "language": "Idioma",
+  "theme": "Tema",
+  "dark": "Escuro",
+  "light": "Claro",
+  "apps": "Aplicativos",
+  "open": "Abrir",
+  "back": "Voltar",
+  "contact": "Contato",
+  "madeby": "By Dhalmeida",
+  "root_index_hint": "Escolha um app abaixo. Tema escuro é o padrão. Troque o idioma no cabeçalho.",
+  "internal_index_hint": "Esta é uma página de app com cabeçalho e rodapé compartilhados, tradução e troca de tema.",
+  "footer_title": "Sobre este projeto",
+  "version": "Versão",
+  "author": "Autor",
+  "email": "E-mail",
+  "website": "Site",
+  "rights": "Todos os direitos reservados.",
+  "company": "Dhalmeida",
+  "tagline_footer": "Utilitários com uma aparência unificada."
+}

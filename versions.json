@@ -2,6 +2,26 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.11",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Temporarily hide body>main on Apex page to validate chrome rendering."
+      ],
+      "changes_pt": [
+        "Oculta temporariamente body>main na página do Apex para validar a renderização do chrome."
+      ]
+    },
+    {
+      "version": "1.0.10",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Force parent /assets only on Apex; hard bootstrap if chrome unavailable; bump header version."
+      ],
+      "changes_pt": [
+        "Apex força /assets do pai; bootstrap duro se chrome indisponível; versão do cabeçalho atualizada."
+      ]
+    },
+    {
       "version": "1.0.9",
       "date": "2025-09-07",
       "changes_en": [

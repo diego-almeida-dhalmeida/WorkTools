@@ -54,13 +54,68 @@
 #apex-app details.examples summary{cursor:pointer;user-select:none}
 #apex-app .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
   </style>
-  <script>
-    (function(){var v='v1.0.7';function add(s,n){var x=document.createElement('script');x.src=s+'?'+v;x.defer=true;x.onerror=function(){if(n)n();};document.head.appendChild(x);}
-      add('../assets/js/app.js', function(){ add('./assets/js/app.js'); });
-      (function w(){ if(window.WT&&WT.init){ try{WT.init();}catch(e){} return; } setTimeout(w,60); })();
-    })();
-  </script>
+  
 <style>#apex-app{position:relative!important;z-index:0!important}</style>
+
+  <script>
+  (function(){
+    var v='v1.0.10';
+    function forceBoot(){
+      if (document.querySelector('header')) return;
+      var h=document.createElement('header');
+      h.innerHTML = '<div class="container" style="display:flex;align-items:center;gap:16px">'
+        + '<div class="brand"><a href="../versions.html" class="badge">v1.0.10</a><span id="title">Various Apps</span></div>'
+        + '<div class="controls"><div class="toolbar">'
+        +   '<button class="iconbtn back-btn" data-action="back" title="Back"><span>←</span><span>Back</span></button>'
+        +   '<a class="iconbtn" href="mailto:diego.almeida@dhalmeida.com" title="Contact"><span>Contact</span></a>'
+        + '</div></div></div>';
+      document.body.prepend(h);
+      var f=document.createElement('footer');
+      f.innerHTML = '<div class="container"><div class="footgrid"><div><h4>About</h4>'
+        + '<div class="kvs"><div class="row"><span class="key">Version</span><span class="val"><a href="../versions.html">v1.0.10</a></span></div></div></div>'
+        + '<div><h4>Contact</h4><div class="kvs"><div class="row"><span class="key">Email</span><span class="val"><a href="mailto:diego.almeida@dhalmeida.com">diego.almeida@dhalmeida.com</a></span></div></div></div></div>'
+        + '<div class="copyright">© <span class="sig">By Dhalmeida</span>. All rights reserved.</div></div>';
+      document.body.appendChild(f);
+      var backBtn = h.querySelector('.back-btn');
+      if(backBtn){ backBtn.addEventListener('click', function(){ try{ if(document.referrer && document.referrer!==location.href){ history.back(); return; } }catch(e){} location.href='../index.html'; }); }
+    }
+    var s=document.createElement('script');
+    s.src='../assets/js/app.js?v=110'; s.defer=true;
+    s.onload=function(){ if(window.WT && WT.init){ try{ WT.init(); }catch(e){} } else { forceBoot(); } };
+    s.onerror=function(){ forceBoot(); };
+    document.head.appendChild(s);
+  })();
+  </script>
+
+
+  <!-- v1.0.10 chrome loader (force parent assets) -->
+  <style>header{position:sticky;top:0;z-index:2147483000}footer{position:relative;z-index:2147482000}body>main{min-height:calc(100vh - 56px - 64px)}</style>
+  <script>
+  (function(){
+    function boot(){
+      if (window.WT && WT.init){ try{ WT.init(); }catch(e){} return; }
+      // emergency header/footer
+      if (document.querySelector('header')) return;
+      var h=document.createElement('header');
+      h.innerHTML='<div class="container" style="display:flex;align-items:center;gap:16px">'
+        +'<div class="brand"><a href="../versions.html" class="badge">v1.0.10</a><span id="title">Various Apps</span></div>'
+        +'<div class="controls"><div class="toolbar">'
+        +'<button class="iconbtn back-btn" data-action="back" title="Back"><span>←</span><span>Back</span></button>'
+        +'<a class="iconbtn" href="mailto:diego.almeida@dhalmeida.com" title="Contact"><span>Contact</span></a>'
+        +'</div></div></div>';
+      document.body.prepend(h);
+      var f=document.createElement('footer');
+      f.innerHTML='<div class="container"><div class="copyright">© <span class="sig">By Dhalmeida</span>. All rights reserved.</div></div>';
+      document.body.appendChild(f);
+      var b=h.querySelector('.back-btn'); if(b){ b.addEventListener('click', function(){ location.href='../index.html'; }); }
+    }
+    var s=document.createElement('script'); s.defer=true; s.src='../assets/js/app.js?v=110';
+    s.onload=boot; s.onerror=boot; document.head.appendChild(s);
+    setTimeout(boot, 300); // last resort
+  })();
+  </script>
+
+<style id="v111-hide-apex">body>main{display:none!important}</style>
 </head>
 <body>
   <main>
@@ -216,340 +271,7 @@ FROM ApexCodeCoverageAggregate</code></pre>
   </div>
     </div>
   </main>
-  <script>
-
-    // State
-    let rows = [];
-    let filteredIdx = [];
-    let selected = new Set();
-
-    const $ = sel => document.querySelector(sel);
-    const mainBody = $('#mainTable tbody');
-    const refinedBody = $('#refinedTable tbody');
-
-    // Mode switching
-    $('#source').addEventListener('change', (e)=>{
-      const mode = e.target.value;
-      $('#pasteBox').style.display = mode==='paste' ? '' : 'none';
-      $('#apiBox').style.display = mode==='api' ? '' : 'none';
-      $('#err').textContent = '';
-    });
-
-    // Examples: copy/fill
-    document.addEventListener('click', (e)=>{
-      const copySel = e.target.getAttribute('data-copy');
-      const fillSel = e.target.getAttribute('data-fill');
-      if(copySel){
-        const text = document.querySelector(copySel)?.innerText ?? '';
-        navigator.clipboard.writeText(text).catch(()=>{});
-      }
-      if(fillSel){
-        const text = document.querySelector(fillSel)?.innerText ?? '';
-        $('#inputRaw').value = text;
-      }
-    });
-
-    // Helpers
-    function toInt(v){ const n = Number(v); return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : 0; }
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function sum(list){
-      const covered = list.reduce((a,b)=>a+b.covered,0);
-      const uncovered = list.reduce((a,b)=>a+b.uncovered,0);
-      const total = covered + uncovered;
-      const pct = total>0 ? (covered/total)*100 : 0;
-      return {covered, uncovered, total, pct};
-    }
-
-    function normalizeObjects(input){
-      return input.map(item=>{
-        const name = item["ApexClassOrTrigger.Name"] ?? item.ApexClassOrTrigger?.Name ?? item.Name ?? "";
-        const covered = toInt(item.NumLinesCovered);
-        const uncovered = toInt(item.NumLinesUncovered);
-        const total = covered + uncovered;
-        const pct = total > 0 ? (covered/total)*100 : 0;
-        return { name, covered, uncovered, total, pct };
-      }).filter(x => x.name !== "");
-    }
-
-    // Detect & parse
-    function detectFormat(text){
-      const t = text.trim();
-      if(!t) return 'empty';
-      if(t.startsWith('[') || t.startsWith('{')) return 'json';
-      if(t.includes('\t')) return 'tsv';
-      if(t.includes(',')) return 'csv';
-      return 'unknown';
-    }
-
-    function parseAny(text){
-      const fmt = detectFormat(text);
-      if(fmt==='json'){
-        const data = JSON.parse(text);
-        if(Array.isArray(data)) return normalizeObjects(data);
-        if(data && Array.isArray(data.records)) return normalizeObjects(data.records);
-        throw new Error('JSON must be an array or have a "records" array.');
-      } else if(fmt==='csv'){
-        const arr = parseCSV(text, ',');
-        return normalizeObjects(arrayToObjects(arr));
-      } else if(fmt==='tsv'){
-        const arr = parseCSV(text, '\t');
-        return normalizeObjects(arrayToObjects(arr));
-      } else if(fmt==='empty'){
-        throw new Error('Empty input.');
-      } else {
-        throw new Error('Could not detect format. Provide JSON, CSV or TSV.');
-      }
-    }
-
-    function arrayToObjects(matrix){
-      if(!matrix.length) return [];
-      const headers = matrix[0].map(h => h.trim());
-      const out = [];
-      for(let i=1;i<matrix.length;i++){
-        const row = {};
-        for(let j=0;j<headers.length;j++){
-          row[headers[j]] = matrix[i][j] ?? '';
-        }
-        out.push(row);
-      }
-      return out;
-    }
-
-    // Minimal CSV/TSV parser
-    function parseCSV(text, sep=','){
-      const rows = [];
-      let cur = [], val = '', inQuotes = false;
-      const pushCell = () => { cur.push(val); val=''; };
-      const pushRow  = () => { rows.push(cur); cur=[]; };
-      for(let i=0;i<text.length;i++){
-        const ch = text[i], nxt = text[i+1];
-        if(inQuotes){
-          if(ch === '"'){
-            if(nxt === '"'){ val += '"'; i++; } else { inQuotes = false; }
-          } else { val += ch; }
-        } else {
-          if(ch === '"'){ inQuotes = true; }
-          else if(ch === sep){ pushCell(); }
-          else if(ch === '\n'){ pushCell(); pushRow(); }
-          else if(ch === '\r'){ /* ignore CR */ }
-          else { val += ch; }
-        }
-      }
-      pushCell(); if(cur.length>1 || rows.length===0) pushRow();
-      return rows.filter(r => r.some(c => String(c).trim()!==''));
-    }
-
-    // Render
-    function renderTable(){
-      mainBody.innerHTML = '';
-      const term = $('#search').value.trim().toLowerCase();
-      filteredIdx = [];
-      rows.forEach((r, i)=>{
-        if(term && !r.name.toLowerCase().includes(term)) return;
-        filteredIdx.push(i);
-
-        const tr = document.createElement('tr');
-        tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
-
-        const cb = document.createElement('input');
-        cb.type = 'checkbox'; cb.className = 'checkbox'; cb.checked = selected.has(i);
-        cb.addEventListener('change', ()=>{
-          if(cb.checked) selected.add(i); else selected.delete(i);
-          renderRefined();
-        });
-
-        tr.innerHTML = `
-          <td></td>
-          <td>${escapeHtml(r.name)}</td>
-          <td class="num">${r.covered}</td>
-          <td class="num">${r.uncovered}</td>
-          <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
-        `;
-        tr.firstElementChild.appendChild(cb);
-        mainBody.appendChild(tr);
-      });
-
-      const totals = sum(rows);
-      $('#totals').innerHTML = `
-        <span class="pill">Total lines: <strong>${totals.total}</strong></span>
-        <span class="pill">Covered: <strong>${totals.covered}</strong></span>
-        <span class="pill">Uncovered: <strong>${totals.uncovered}</strong></span>
-        <span class="pill">Overall %: <strong>${totals.pct.toFixed(2)}%</strong></span>
-        <span class="pill">Items: <strong>${rows.length}</strong></span>
-      `;
-      $('#checkAll').checked = filteredIdx.every(i => selected.has(i)) && filteredIdx.length>0;
-      renderRefined();
-    }
-
-    function renderRefined(){
-      refinedBody.innerHTML = '';
-      const chosen = [...selected].map(i => rows[i]);
-      chosen.forEach(r=>{
-        const tr = document.createElement('tr');
-        tr.className = r.pct < 80 ? 'pct-bad' : 'pct-ok';
-        tr.innerHTML = `
-          <td>${escapeHtml(r.name)}</td>
-          <td class="num">${r.covered}</td>
-          <td class="num">${r.uncovered}</td>
-          <td class="num"><span class="badge">${r.pct.toFixed(2)}%</span></td>
-        `;
-        refinedBody.appendChild(tr);
-      });
-      const totals = sum(chosen);
-      $('#refinedTotals').textContent =
-        chosen.length ? `Selected: ${chosen.length} • Avg %: ${totals.pct.toFixed(2)}%` : 'No selection';
-    }
-
-    // Paste mode actions
-    $('#btnLoad').addEventListener('click', ()=>{
-      $('#err').textContent = '';
-      selected.clear();
-      try{
-        rows = parseAny($('#inputRaw').value);
-        if(!rows.length) throw new Error('No valid rows found.');
-        renderTable();
-      }catch(e){
-        rows = []; mainBody.innerHTML = ''; refinedBody.innerHTML = '';
-        $('#totals').innerHTML = ''; $('#refinedTotals').textContent = '';
-        $('#err').textContent = 'Error: ' + e.message;
-      }
-    });
-
-    $('#btnSample').addEventListener('click', ()=>{
-      const sample = [
-        {"ApexClassOrTrigger.Name":"AccountTrigger","NumLinesCovered":5,"NumLinesUncovered":1},
-        {"ApexClassOrTrigger.Name":"ATL_AvayaConnectorController","NumLinesCovered":137,"NumLinesUncovered":16},
-        {"ApexClassOrTrigger.Name":"ATL_AutosservicoGetInvalidAsset","NumLinesCovered":31,"NumLinesUncovered":11},
-        {"ApexClassOrTrigger.Name":"ATL_Utils","NumLinesCovered":92,"NumLinesUncovered":446},
-        {"ApexClassOrTrigger.Name":"BusinessHoursUtil","NumLinesCovered":39,"NumLinesUncovered":1},
-        {"ApexClassOrTrigger.Name":"TriggerHandler","NumLinesCovered":44,"NumLinesUncovered":59}
-      ];
-      $('#inputRaw').value = JSON.stringify(sample, null, 2);
-    });
-
-    // API mode actions
-    async function runTooling(){
-      const base = $('#instanceUrl').value.trim().replace(/\/+$/,'');
-      const v = $('#apiVersion').value.trim();
-      const token = $('#accessToken').value.trim();
-      const soql = $('#soql').value.trim();
-      if(!base || !v || !token || !soql){
-        throw new Error('Instance URL, API Version, Access Token and SOQL are required.');
-      }
-      const url = `${base}/services/data/v${encodeURIComponent(v)}/tooling/query/?q=${encodeURIComponent(soql)}`;
-      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-      if(!res.ok){
-        const t = await res.text().catch(()=> '');
-        throw new Error(`HTTP ${res.status} ${res.statusText} • ${t.slice(0,300)}`);
-      }
-      const json = await res.json();
-      const records = Array.isArray(json.records) ? json.records : [];
-      return normalizeObjects(records);
-    }
-
-    $('#btnRun').addEventListener('click', async ()=>{
-      $('#err').textContent = '';
-      selected.clear();
-      try{
-        rows = await runTooling();
-        if(!rows.length) throw new Error('No records returned or fields missing.');
-        renderTable();
-      }catch(e){
-        rows = []; mainBody.innerHTML = ''; refinedBody.innerHTML = '';
-        $('#totals').innerHTML = ''; $('#refinedTotals').textContent = '';
-        $('#err').textContent = 'Tooling API error: ' + e.message;
-      }
-    });
-
-    // Common controls
-    $('#search').addEventListener('input', renderTable);
-
-    $('#checkAll').addEventListener('change', (e)=>{
-      const mark = e.target.checked;
-      filteredIdx.forEach(i => mark ? selected.add(i) : selected.delete(i));
-      renderTable();
-    });
-
-    $('#selectVisible').addEventListener('click', ()=>{
-      filteredIdx.forEach(i => selected.add(i));
-      renderRefined();
-      $('#checkAll').checked = filteredIdx.length>0;
-    });
-
-    $('#clearSelection').addEventListener('click', ()=>{
-      selected.clear();
-      renderTable();
-    });
-
-    $('#exportCsv').addEventListener('click', ()=>{
-      const chosen = [...selected].map(i=>rows[i]);
-      if(!chosen.length){ alert('No selection.'); return; }
-      const header = ['Name','NumLinesCovered','NumLinesUncovered','PercentCovered'];
-      const lines = [header.join(',')].concat(chosen.map(r=>[
-        `"${r.name.replace(/"/g,'""')}"`, r.covered, r.uncovered, r.pct.toFixed(2)
-      ].join(',')));
-      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'refined_coverage.csv';
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    });
   
-  </script>
-
-  <script>
-  (function(){
-    var lang = (localStorage.getItem('wt_lang')||'en');
-    var isFile = location.protocol==='file:';
-    var strings = lang==='pt' ? {
-      app_title:'Aplicativos Diversos', back:'Voltar', contact:'Contato', version:'Versão'
-    } : { app_title:'Various Apps', back:'Back', contact:'Contact', version:'Version' };
-    function ensureChrome(){
-      if (document.querySelector('header')) return true;
-      var h=document.createElement('header');
-      var rootHref = isFile ? '../index.html' : '/WorkTools/index.html';
-      h.innerHTML = '<div class="container" style="display:flex;align-items:center;gap:16px">'
-        + '<div class="brand">'
-        +   '<a href="../versions.html" class="badge">v1.0.9</a>'
-        +   '<span id="title">'+strings.app_title+'</span>'
-        + '</div>'
-        + '<div class="controls"><div class="toolbar">'
-        +   '<button class="iconbtn back-btn" data-action="back" title="'+strings.back+'"><span>←</span><span>'+strings.back+'</span></button>'
-        +   '<a class="iconbtn" href="mailto:diego.almeida@dhalmeida.com" title="'+strings.contact+'"><span>'+strings.contact+'</span></a>'
-        + '</div></div></div>';
-      document.body.prepend(h);
-      var f=document.createElement('footer');
-      f.innerHTML = '<div class="container">'
-        + '<div class="footgrid"><div><h4>About</h4><div class="kvs">'
-        + '<div class="row"><span class="key">'+strings.version+'</span><span class="val"><a href="../versions.html">v1.0.9</a></span></div>'
-        + '</div></div><div><h4>'+strings.contact+'</h4><div class="kvs">'
-        + '<div class="row"><span class="key">Email</span><span class="val"><a href="mailto:diego.almeida@dhalmeida.com">diego.almeida@dhalmeida.com</a></span></div>'
-        + '</div></div></div><div class="copyright">© <span class="sig">By Dhalmeida</span>. All rights reserved.</div></div>';
-      document.body.appendChild(f);
-      // listeners
-      var backBtn = h.querySelector('[data-action=back]');
-      if (backBtn) backBtn.addEventListener('click', function(){
-        try{ if (document.referrer && document.referrer !== location.href){ history.back(); return; } }catch(e){}
-        location.href = rootHref;
-      });
-      return false;
-    }
-    function tick(){
-      if (window.WT && WT.init){
-        try{ WT.init(); }catch(e){}
-        if (!document.querySelector('header')) ensureChrome();
-        return;
-      }
-      if (!ensureChrome()){
-        setTimeout(function(){
-          if (!(window.WT && document.querySelector('header'))) ensureChrome();
-        }, 120);
-      }
-    }
-    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', tick); else tick();
-  })();
-  </script>
 
 </body>
 </html>
