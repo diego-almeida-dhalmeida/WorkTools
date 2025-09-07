@@ -6,8 +6,10 @@
   <title>Apex Test Coverage Viewer</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
   <style id="apex-scoped">
-#apex-app{--bg:#0f1115; --panel:#151821; --muted:#9aa4b2; --text:#e8ecf1; --accent:#4aa3ff; --danger:#ff5b5b;
-      --ok:#2fd47a; --border:#242939;}
+#apex-app{
+      --bg:#0f1115; --panel:#151821; --muted:#9aa4b2; --text:#e8ecf1; --accent:#4aa3ff; --danger:#ff5b5b;
+      --ok:#2fd47a; --border:#242939;
+    }
 #apex-app html,#apex-app body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
 #apex-app h1{font-size:18px;margin:12px 0}
 #apex-app .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
@@ -205,120 +207,10 @@ FROM ApexCodeCoverageAggregate</code></pre>
     </section>
 
   </div>
-
-  <script>
-    // State
-    let rows = [];
-    let filteredIdx = [];
-    let selected = new Set();
-
-    const $ = sel => document.querySelector(sel);
-    const mainBody = $('#mainTable tbody');
-    const refinedBody = $('#refinedTable tbody');
-
-    // Mode switching
-    $('#source').addEventListener('change', (e)=>{
-      const mode = e.target.value;
-      $('#pasteBox').style.display = mode==='paste' ? '' : 'none';
-      $('#apiBox').style.display = mode==='api' ? '' : 'none';
-      $('#err').textContent = '';
-    });
-
-    // Examples: copy/fill
-    document.addEventListener('click', (e)=>{
-      const copySel = e.target.getAttribute('data-copy');
-      const fillSel = e.target.getAttribute('data-fill');
-      if(copySel){
-        const text = document.querySelector(copySel)?.innerText ?? '';
-        navigator.clipboard.writeText(text).catch(()=>{});
-      }
-      if(fillSel){
-        const text = document.querySelector(fillSel)?.innerText ?? '';
-        $('#inputRaw').value = text;
-      }
-    });
-
-    // Helpers
-    function toInt(v){ const n = Number(v); return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : 0; }
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function sum(list){
-      const covered = list.reduce((a,b)=>a+b.covered,0);
-      const uncovered = list.reduce((a,b)=>a+b.uncovered,0);
-      const total = covered + uncovered;
-      const pct = total>0 ? (covered/total)*100 : 0;
-      return {covered, uncovered, total, pct};
-    }
-
-    function normalizeObjects(input){
-      return input.map(item=>{
-        const name = item["ApexClassOrTrigger.Name"] ?? item.ApexClassOrTrigger?.Name ?? item.Name ?? "";
-        const covered = toInt(item.NumLinesCovered);
-        const uncovered = toInt(item.NumLinesUncovered);
-        const total = covered + uncovered;
-        const pct = total > 0 ? (covered/total)*100 : 0;
-        return { name, covered, uncovered, total, pct };
-      }).filter(x => x.name !== "");
-    }
-
-    // Detect & parse
-    function detectFormat(text){
-      const t = text.trim();
-      if(!t) return 'empty';
-      if(t.startsWith('[') || t.startsWith('{')) return 'json';
-      if(t.includes('\t')) return 'tsv';
-      if(t.includes(',')) return 'csv';
-      return 'unknown';
-    }
-
-    function parseAny(text){
-      const fmt = detectFormat(text);
-      if(fmt==='json'){
-        const data = JSON.parse(text);
-        if(Array.isArray(data)) return normalizeObjects(data);
-        if(data && Array.isArray(data.records)) return normalizeObjects(data.records);
-        throw new Error('JSON must be an array or have a "records" array.');
-      } else if(fmt==='csv'){
-        const arr = parseCSV(text, ',');
-        return normalizeObjects(arrayToObjects(arr));
-      } else if(fmt==='tsv'){
-        const arr = parseCSV(text, '\t');
-        return normalizeObjects(arrayToObjects(arr));
-      } else if(fmt==='empty'){
-        throw new Error('Empty input.');
-      } else {
-        throw new Error('Could not detect format. Provide JSON, CSV or TSV.');
-      }
-    }
-
-    function arrayToObjects(matrix){
-      if(!matrix.length) return [];
-      const headers = matrix[0].map(h => h.trim());
-      const out = [];
-      for(let i=1;i<matrix.length;i++){
-        const row = {};
-        for(let j=0;j<headers.length;j++){
-          row[headers[j]] = matrix[i][j] ?? '';
-        }
-        out.push(row);
-      }
-      return out;
-    }
-
-    // Minimal CSV/TSV parser
-    function parseCSV(text, sep=','){
-      const rows = [];
-      let cur = [], val = '', inQuotes = false;
-      const pushCell = () => { cur.push(val); val=''; };
-      const pushRow  = () => { rows.push(cur); cur=[]; };
-      for(let i=0;i<text.length;i++){
-        const ch = text[i], nxt = text[i+1];
-        if(inQuotes){
-          if(ch === '"'){
     </div>
   </main>
   <script src="../assets/js/app.js" defer></script>
-<script>window.WT && WT.init && WT.init();</script>
-  
+  <script>window.WT&&WT.init&&WT.init();</script>
   <script>
 // State
     let rows = [];
