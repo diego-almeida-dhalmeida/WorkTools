@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Various Apps</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='12' font-size='12'%3E⚙%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ctext y=%2712%27 font-size=%2712%27%3E⚙%3C/text%3E%3C/svg%3E">
 </head>
 <body>
   <main>
-    <h2>🔗 Apps</h2>
-    <div class="grid" id="app-list"></div>
+    <h2 style="margin:0 0 6px 0">🔗 <span id="apps-title">Apps</span></h2>
+    <div class="grid" id="app-list" aria-label="Applications"></div>
   </main>
-  <script id="apps-data" type="application/json">{"apps": [{"id": "apextestcoverageviewer", "path": "ApexTestCoverageViewer", "title": {"en": "ApexTestCoverageViewer", "pt": "ApexTestCoverageViewer"}, "description": {"en": "Open the ApexTestCoverageViewer utility.", "pt": "Abrir o utilitário ApexTestCoverageViewer."}}, {"id": "ganttcharteditor", "path": "GanttChartEditor", "title": {"en": "GanttChartEditor", "pt": "GanttChartEditor"}, "description": {"en": "Open the GanttChartEditor utility.", "pt": "Abrir o utilitário GanttChartEditor."}}]}</script>
   <script src="assets/js/app.js" defer></script>
+  <script>window.WT&&WT.init&&WT.init();</script>
 </body>
 </html>
