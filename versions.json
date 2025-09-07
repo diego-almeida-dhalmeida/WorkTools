@@ -2,6 +2,36 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.14",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Fix: WT header detection now ignores app headers (uses header[data-wt]); version bump; idempotent mount."
+      ],
+      "changes_pt": [
+        "Correção: detecção do cabeçalho ignora headers do app (usa header[data-wt]); versão atualizada; montagem idempotente."
+      ]
+    },
+    {
+      "version": "1.0.13",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Fix SyntaxError by replacing logger; remove hide style; add visible header bg; keep loader."
+      ],
+      "changes_pt": [
+        "Corrige SyntaxError trocando logger; remove estilo de ocultação; header com bg visível; mantém loader."
+      ]
+    },
+    {
+      "version": "1.0.12",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Verbose console logs in app.js and Apex loader; forced parent assets; hard bootstrap; visual badge v1.0.12."
+      ],
+      "changes_pt": [
+        "Logs verbosos no app.js e loader do Apex; força assets do pai; bootstrap duro; badge visual v1.0.12."
+      ]
+    },
+    {
       "version": "1.0.11",
       "date": "2025-09-07",
       "changes_en": [

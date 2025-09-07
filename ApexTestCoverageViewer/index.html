@@ -115,7 +115,58 @@
   })();
   </script>
 
-<style id="v111-hide-apex">body>main{display:none!important}</style>
+
+
+  <!-- v1.0.12 loader & logs -->
+  <script>
+  (function(){
+    const TAG='WTv1.0.12';
+    function log(){ try{ console.log('[%s:apex]', TAG, ...arguments); }catch(e){} }
+    function warn(){ try{ console.warn('[%s:apex]', TAG, ...arguments); }catch(e){} }
+    function err(){ try{ console.error('[%s:apex]', TAG, ...arguments); }catch(e){} }
+
+    log('head:loader:start', {url: location.href, ready: document.readyState});
+
+    function ensureChrome(reason){
+      if (document.querySelector('header')){ log('ensureChrome:exists', reason||''); return; }
+      warn('ensureChrome:inject', reason||'');
+      var h=document.createElement('header');
+      h.innerHTML='<div class="container" style="display:flex;align-items:center;gap:16px">'
+        +'<div class="brand"><a href="../versions.html" class="badge">v1.0.12</a><span id="title">Various Apps</span></div>'
+        +'<div class="controls"><div class="toolbar">'
+        +'<button class="iconbtn back-btn" data-action="back" title="Back"><span>←</span><span>Back</span></button>'
+        +'<a class="iconbtn" href="mailto:diego.almeida@dhalmeida.com" title="Contact"><span>Contact</span></a>'
+        +'</div></div></div>';
+      document.body.prepend(h);
+      var f=document.createElement('footer');
+      f.innerHTML='<div class="container"><div class="copyright">© <span class="sig">By Dhalmeida</span>. All rights reserved.</div></div>';
+      document.body.appendChild(f);
+      var b=h.querySelector('.back-btn'); if(b){ b.addEventListener('click', function(){ location.href='../index.html'; }); }
+      log('ensureChrome:done', {hasHeader: !!document.querySelector('header'), hasFooter: !!document.querySelector('footer')});
+    }
+
+    function boot(){
+      if (window.WT && WT.init){
+        log('boot:WT.init available');
+        try{ WT.init(); }catch(e){ err('boot:WT.init error', e); }
+        if (!document.querySelector('header')) ensureChrome('WT.init returned without header');
+        return;
+      }
+      ensureChrome('WT.init not available');
+    }
+
+    // Force parent assets
+    var s=document.createElement('script'); s.defer=true; s.src='../assets/js/app.js?v=112';
+    s.onload=function(){ log('loader:onload', s.src); boot(); };
+    s.onerror=function(){ err('loader:onerror', s.src); boot(); };
+    document.head.appendChild(s);
+
+    // Last resort fallback
+    setTimeout(function(){ warn('loader:timeout fallback'); boot(); }, 500);
+  })();
+  </script>
+
+<style id="v113-visual">header{background:rgba(0,0,0,.6)!important} body>main{display:block!important}</style>
 </head>
 <body>
   <main>
