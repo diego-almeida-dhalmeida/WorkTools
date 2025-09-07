@@ -1,5 +1,5 @@
 (function(){
-  const VERSION = "v1.0.7";
+  const VERSION = "v1.0.8";
   const BASE_PATH = "/WorkTools";
   const IS_FILE = location.protocol === "file:";
   const LS_THEME = "wt_theme";
@@ -77,6 +77,23 @@
         <div class="copyright">© <span class="sig">${strings.madeby}</span>. ${strings.rights}</div>
       </div>`;
     document.body.appendChild(f);
+    // v1.0.8 layout guard
+    (function () {
+      const main = document.querySelector('body > main');
+      const hdr = document.querySelector('header');
+      const ftr = document.querySelector('footer');
+      if (hdr) { hdr.style.position='sticky'; hdr.style.top='0'; hdr.style.zIndex='10000'; hdr.style.isolation='isolate'; }
+      if (ftr) { ftr.style.position='relative'; ftr.style.zIndex='9999'; ftr.style.isolation='isolate'; }
+      const h = hdr ? hdr.offsetHeight : 0;
+      const b = ftr ? ftr.offsetHeight : 0;
+      document.documentElement.style.setProperty('--wt-hdr', h + 'px');
+      document.documentElement.style.setProperty('--wt-ftr', b + 'px');
+      if (main) { main.style.minHeight = `calc(100vh - ${h}px - ${b}px)`; main.style.paddingTop='8px'; main.style.paddingBottom='8px'; }
+      const app = document.getElementById('apex-app');
+      if (app) { app.style.position='relative'; app.style.zIndex='0'; app.style.minHeight='auto'; app.style.height='auto'; }
+      console.debug('WT v1.0.8 chrome mounted', { hdr: !!hdr, ftr: !!ftr });
+    })();
+
 
     const langsw = h.querySelector(".langswitch");
     if (langsw) langsw.addEventListener("click", (e)=>{ const b=e.target.closest("button[data-lang]"); if(!b) return; localStorage.setItem(LS_LANG,b.dataset.lang); location.reload(); });

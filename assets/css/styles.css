@@ -92,3 +92,12 @@ footer .kvs .row{display:flex; justify-content:space-between; gap:10px; border-b
 footer .kvs .key{ color:var(--muted) }
 footer .kvs .val{ font-weight:600 }
 footer .copyright{ margin-top:10px; font-size:12px; color:var(--muted) }
+
+
+/* ===== v1.0.8 chrome layout guard ===== */
+:root{ --wt-hdr: 56px; --wt-ftr: 64px; }
+header{ position: sticky; top: 0; z-index: 10000; isolation: isolate; }
+footer{ position: relative; z-index: 9999; isolation: isolate; }
+body>main{ min-height: calc(100vh - var(--wt-hdr) - var(--wt-ftr)); padding-block: 8px; }
+#apex-app{ position: relative; z-index: 0; }
+#apex-app, #apex-app *{ box-sizing: border-box; max-width: 100%; }

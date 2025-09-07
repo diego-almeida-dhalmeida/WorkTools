@@ -2,6 +2,16 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.8",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Header/footer pinned above app; dynamic spacing; responsive main; prevents Apex overlay."
+      ],
+      "changes_pt": [
+        "Cabeçalho/rodapé acima do app; espaçamento dinâmico; main responsivo; evita overlay do Apex."
+      ]
+    },
+    {
       "version": "1.0.5",
       "date": "2025-09-07",
       "changes_en": [
