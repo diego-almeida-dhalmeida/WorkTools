@@ -2,6 +2,26 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.28",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "Apex: gradiente vertical (preto→vermelho) na linha abaixo do limite; pílula % arredondada; busca na mainTable funcionando."
+      ],
+      "changes_en": [
+        "Apex: vertical gradient (black→red) on below-threshold rows; rounded % pill; working mainTable search."
+      ]
+    },
+    {
+      "version": "1.0.27",
+      "date": "2025-09-07",
+      "changes_pt": [
+        "Apex: gradiente vermelho→preto na linha abaixo do limite, sem bordas internas; pílula % verde/vermelha reforçada."
+      ],
+      "changes_en": [
+        "Apex: red→black gradient fill on below-threshold rows, no inner borders; stronger % pill colors."
+      ]
+    },
+    {
       "version": "1.0.26",
       "date": "2025-09-07",
       "changes_pt": [

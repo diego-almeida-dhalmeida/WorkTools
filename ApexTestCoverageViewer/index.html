@@ -366,14 +366,15 @@ FROM ApexCodeCoverageAggregate</code></pre>
     #mainTable td.num, #refinedTable th:nth-child(2), #refinedTable th:nth-child(3), #refinedTable th:nth-child(4),
     #refinedTable td.num { text-align: right; }
     /* row highlight */
-.wt-row-bad { outline: 1px solid rgba(255,23,68,.45) !important; background: inherit !important; }
-:is(html.dark, .dark) .wt-row-bad { outline: 1px solid rgba(255,23,68,.6) !important; background: transparent !important; }
+.wt-row-bad{ background: linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(255,23,68,.28) 100%) !important; outline: none !important; }
+:is(html.dark, .dark) .wt-row-bad{ background: linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(255,23,68,.38) 100%) !important; outline: none !important; }
+.wt-row-bad > td{ border-color: transparent !important; }
 /* percent pill */
-.wt-pill{display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.85rem; line-height:1; font-weight:600; letter-spacing:.2px;}
-.wt-pill.wt-good{ background:#1fae51; color:#08140c; }
-.wt-pill.wt-bad{ background:#ff1744; color:#19070b; }
-:is(html.dark, .dark) .wt-pill.wt-good{ background:#1de9b6; color:#04120f; }
-:is(html.dark, .dark) .wt-pill.wt-bad{ background:#ff1744; color:#140409; }
+.wt-pill{display:inline-inline-block; padding:.2rem .7rem; border-radius:9999px; font-size:.86rem; line-height:1; font-weight:700; letter-spacing:.2px; border:1px solid transparent;}
+.wt-pill.wt-good{ background:#1ec46b; color:#08140c; border-color:#0e6e3c33; }
+.wt-pill.wt-bad{ background:#ff1744; color:#140409; border-color:#7f0b221f; }
+:is(html.dark, .dark) .wt-pill.wt-good{ background:#1de9b6; color:#03120e; border-color:#0a5f4a44; }
+:is(html.dark, .dark) .wt-pill.wt-bad{ background:#ff1744; color:#140409; border-color:#8d0b263a; }
 /* controls */
     .wt-controls { display:flex; align-items:center; gap:8px; margin:8px 0 4px 0; font-size: .95rem; opacity:.95;}
     .wt-controls label{opacity:.9}
@@ -451,13 +452,36 @@ FROM ApexCodeCoverageAggregate</code></pre>
     }
 
     function observeTables(){
-      var obs = new MutationObserver(function(){
-        patchPctFormatting(); applyRowStyles();
+  var obs = new MutationObserver(function(){
+    patchPctFormatting(); applyRowStyles();
+  });
+  var mt = qs('#mainTable tbody'); if (mt) obs.observe(mt, {childList:true, subtree:true, characterData:true});
+  var rt = qs('#refinedTable tbody'); if (rt) obs.observe(rt, {childList:true, subtree:true, characterData:true});
+  patchPctFormatting(); applyRowStyles();
+}
+
+// search binding for mainTable
+function bindSearch(){
+  if (bindSearch._bound) return;
+  var cand = qs('#apex-app input[type=search]')
+         || qsa('#apex-app input').find(function(i){ var p=(i.getAttribute('placeholder')||'').toLowerCase(); return p.indexOf('search')>=0 || p.indexOf('name')>=0; })
+         || qs('input[type=search]')
+         || qsa('input').find(function(i){ var p=(i.getAttribute('placeholder')||'').toLowerCase(); return p.indexOf('search')>=0; });
+  if(!cand){ W('search:notFound'); return; }
+  var tmr=null; var last='';
+  cand.addEventListener('input', function(){
+    var q=(cand.value||'').toLowerCase().trim(); if(q===last) return; last=q; clearTimeout(tmr);
+    tmr=setTimeout(function(){
+      var rows=qsa('#mainTable tbody tr');
+      rows.forEach(function(tr){
+        var nameCell = tr.children[1]; var txt = nameCell ? (nameCell.textContent||'').toLowerCase() : '';
+        tr.style.display = (!q || txt.indexOf(q)>=0) ? '' : 'none';
       });
-      var mt = qs('#mainTable tbody'); if (mt) obs.observe(mt, {childList:true, subtree:true, characterData:true});
-      var rt = qs('#refinedTable tbody'); if (rt) obs.observe(rt, {childList:true, subtree:true, characterData:true});
-      patchPctFormatting(); applyRowStyles();
-    }
+      L('search:filter', {q:q, rows:rows.length});
+    }, 80);
+  });
+  bindSearch._bound=true; L('search:bound');
+}
 
     // ==== fallback integration (from v1.0.22) ====
     // anonymized sample
@@ -628,11 +652,7 @@ FROM ApexCodeCoverageAggregate</code></pre>
       }
     }
 
-    function init(){
-      ensureControls();
-      observeTables();
-      attach();
-    }
+    function init(){ ensureControls(); observeTables(); attach(); bindSearch(); }
     if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
     setTimeout(init, 500);
   })();

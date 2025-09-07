@@ -1,6 +1,6 @@
 (function(){
-  // ===== WorkTools chrome v1.0.26 =====
-  var VERSION = "v1.0.26";
+  // ===== WorkTools chrome v1.0.28 =====
+  var VERSION = "v1.0.28";
   var BASE_PATH = "/WorkTools";
   var IS_FILE = location.protocol === "file:";
   var LS_THEME = "wt_theme";
@@ -17,7 +17,7 @@
 
 
   // ultra-safe logger (no rest params)
-  var WTV = "WTv1.0.26";
+  var WTV = "WTv1.0.28";
   function WTL(){ try{ var a=[ "["+WTV+"]" ]; for(var i=0;i<arguments.length;i++) a.push(arguments[i]); console.log.apply(console, a); }catch(e){} }
   window.addEventListener("error", function(e){ try{ console.error("["+WTV+":error]", e.message); }catch(_){}});
   window.addEventListener("unhandledrejection", function(e){ try{ console.error("["+WTV+":promise]", e.reason); }catch(_){}});
