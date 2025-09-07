@@ -40,7 +40,7 @@ function __isRoot(){
     h.innerHTML = `
       <div class="container" style="display:flex; align-items:center; gap:16px">
         <div class="brand">
-          <a href="${IS_ROOT?'./':'../'}versions.html" class="badge">v1.0.0</a>
+          <a href="${IS_ROOT?'./':'../'}versions.html" class="badge">v1.0.2</a>
           <span id="title">${strings.app_title}</span>
         </div>
         <div class="controls">
@@ -125,11 +125,13 @@ document.body.prepend(h);
     return lang==='pt' ? pt : en;
   }
 
-  document.addEventListener('DOMContentLoaded', ()=>{
+  document.addEventListener('DOMContentLoaded', ()=>{ window.WT = window.WT || {};
     if(window.WT && WT.__built) return; WT = window.WT || {}; WT.__built = true;
     const lang = currentLang();
     const strings = t(lang);
-    (window.WT = window.WT || {}).init = function(){ if(document.querySelector('header')) return; buildChrome(strings); };
+    window.WT = window.WT || {}; WT.__sig='WT v1.0.1'; WT.init = function(){ if(document.querySelector('header')) return; console.log('WT v1.0.1 init'); WT.init();
+if(document.readyState==='complete'||document.readyState==='interactive'){ try{ WT.init(); }catch(e){} } };
+    (window.WT = window.WT || {}).init = function(){ if(document.querySelector('header')) return; WT.init(); };
     WT.init();
 
     if(IS_ROOT){

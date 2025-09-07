@@ -3,6 +3,22 @@
   "versions": [
     {
       "version": "1.0.2",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Hardened global init (WT.init) with idempotency and ready-state fallback",
+        "Unified header/footer now guaranteed on internal pages",
+        "Version badge bumped to v1.0.2 with console marker",
+        "Removed stale loaders and ensured correct script linking"
+      ],
+      "changes_pt": [
+        "Init global (WT.init) robusto e idempotente com fallback por readyState",
+        "Cabeçalho/rodapé garantidos em páginas internas",
+        "Badge de versão atualizado para v1.0.2 com marcador no console",
+        "Loaders antigos removidos e links de script corrigidos"
+      ]
+    },
+    {
+      "version": "1.0.0",
       "date": "2025-09-06",
       "changes_en": [
         "Unified header and footer across all apps",
