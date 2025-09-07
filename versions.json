@@ -2,6 +2,36 @@
   "project": "WorkTools",
   "versions": [
     {
+      "version": "1.0.5",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Fixed HTML-in-script; clean Apex index with scoped CSS."
+      ],
+      "changes_pt": [
+        "Corrigido HTML dentro de script; Apex com CSS isolado."
+      ]
+    },
+    {
+      "version": "1.0.7",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Static include for app.js on Apex; unified header/footer guaranteed; version bump and cleanup."
+      ],
+      "changes_pt": [
+        "Include estático do app.js no Apex; cabeçalho/rodapé garantidos; versão atualizada e limpeza."
+      ]
+    },
+    {
+      "version": "1.0.6",
+      "date": "2025-09-07",
+      "changes_en": [
+        "Robust loader in internal pages; fixed stray HTML breaking scripts; cache-busting on assets."
+      ],
+      "changes_pt": [
+        "Loader robusto nas páginas internas; remoção de HTML solto; cache-busting nos assets."
+      ]
+    },
+    {
       "version": "1.0.2",
       "date": "2025-09-07",
       "changes_en": [

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apex Test Coverage Viewer</title>
-  <link rel="stylesheet" href="../assets/css/styles.css?v=106">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=107">
   <style id="apex-scoped">
 #apex-app{
       --bg:#0f1115; --panel:#151821; --muted:#9aa4b2; --text:#e8ecf1; --accent:#4aa3ff; --danger:#ff5b5b;
@@ -54,6 +54,12 @@
 #apex-app details.examples summary{cursor:pointer;user-select:none}
 #apex-app .example-bar{display:flex;gap:8px;align-items:center;margin:8px 0}
   </style>
+  <script>
+    (function(){var v='v1.0.7';function add(s,n){var x=document.createElement('script');x.src=s+'?'+v;x.defer=true;x.onerror=function(){if(n)n();};document.head.appendChild(x);}
+      add('../assets/js/app.js', function(){ add('./assets/js/app.js'); });
+      (function w(){ if(window.WT&&WT.init){ try{WT.init();}catch(e){} return; } setTimeout(w,60); })();
+    })();
+  </script>
 </head>
 <body>
   <main>
@@ -209,23 +215,9 @@ FROM ApexCodeCoverageAggregate</code></pre>
   </div>
     </div>
   </main>
-  
   <script>
-  (function(){
-    var v='v1.0.6';
-    function inject(src, onerr){
-      var s=document.createElement('script');
-      s.src=src+'?'+v; s.defer=true; s.onerror=onerr||function(){};
-      document.head.appendChild(s);
-    }
-    // try parent assets first, then local assets as fallback
-    inject('../assets/js/app.js', function(){ inject('./assets/js/app.js'); });
-    (function wait(){ if(window.WT && WT.init){ try{ WT.init(); }catch(e){} return; } setTimeout(wait,60); })();
-  })();
-  </script>
 
-  <script>
-// State
+    // State
     let rows = [];
     let filteredIdx = [];
     let selected = new Set();
@@ -502,6 +494,7 @@ FROM ApexCodeCoverageAggregate</code></pre>
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     });
+  
   </script>
 </body>
 </html>
