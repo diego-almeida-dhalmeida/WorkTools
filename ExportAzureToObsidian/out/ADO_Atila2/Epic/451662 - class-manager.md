@@ -1,0 +1,57 @@
+---
+id: "WI-451662"
+title: "Class Manager"
+type: "Epic"
+state: "New"
+area: "Atila 2.0\COE RELACIONAMENTO"
+iteration: "Atila 2.0\Sprint 01-2025-Relacionamento"
+assignedTo: ""
+created: "2025-01-23T09:38:48.697Z"
+changed: "2025-01-23T09:38:48.937Z"
+---
+# WI-451662 - Class Manager
+
+**Link ADO:** [https://dev.azure.com/arquiteturaestacio/Atila%202.0/_workitems/edit/451662](https://dev.azure.com/arquiteturaestacio/Atila%202.0/_workitems/edit/451662)
+
+## 1. Identificação
+
+- **ID/Ref:** WI-451662
+- **Tipo:** Epic
+- **Status:** New
+
+
+## 2. Contexto
+- **Objetivo do Caso de Uso:** 
+- **Descrição Resumida:** 
+
+
+## 3. Fluxo Principal
+1. 
+2. 
+3. 
+
+
+## 4. Fluxos Alternativos
+- 
+
+
+## 5. Fluxos de Exceção
+- 
+
+
+## 6. Regras de Negócio
+- 
+
+
+## 7. Requisitos Não Funcionais
+- 
+
+
+## 8. Métricas e Critérios de Aceite
+
+- 
+
+
+## 9. Descrição (Abaixo vem do Azure DevOps)
+
+_Sem descrição no ADO._

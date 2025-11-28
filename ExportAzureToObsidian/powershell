@@ -1,0 +1,74 @@
+param(
+  [string]$OrgUrl = $env:ADO_ORG_URL,
+  [string]$Project = $env:ADO_PROJECT,
+  [string]$Pat = $env:ADO_PAT,
+  [string]$OutDir = ".\out\ado-ps",
+  [string]$Types = "User Story,Bug"
+)
+
+$ErrorActionPreference = "Stop"
+$headers = @{
+  "Authorization" = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$Pat"))
+  "Content-Type"  = "application/json"
+}
+
+$typesArr = $Types.Split(",") | ForEach-Object { "'$($_.Trim())'" }
+$where = @("[System.TeamProject] = '$Project'", "[System.WorkItemType] IN (" + ($typesArr -join ", ") + ")")
+$wiql = @{
+  query = "SELECT [System.Id] FROM workitems WHERE $($where -join ' AND ') ORDER BY [System.ChangedDate] DESC"
+} | ConvertTo-Json
+
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+
+$wiqlUrl = "$OrgUrl/$Project/_apis/wit/wiql?api-version=7.0"
+$resp = Invoke-RestMethod -Method Post -Uri $wiqlUrl -Headers $headers -Body $wiql
+$ids = $resp.workItems.id
+if(-not $ids){ Write-Host "Nada encontrado."; exit }
+
+$batchUrl = "$OrgUrl/_apis/wit/workitemsbatch?api-version=7.0"
+$fields = @(
+  "System.Id","System.Title","System.WorkItemType","System.State",
+  "System.AreaPath","System.IterationPath","System.Tags","System.Description"
+)
+
+for($i=0; $i -lt $ids.Count; $i+=180){
+  $slice = $ids[$i..([Math]::Min($i+179,$ids.Count-1))]
+  $body = @{ ids = $slice; fields = $fields; expand = "Relations" } | ConvertTo-Json
+  $data = Invoke-RestMethod -Method Post -Uri $batchUrl -Headers $headers -Body $body
+  foreach($wi in $data.value){
+    $f = $wi.fields
+    $id = $wi.id
+    $title = $f.'System.Title'
+    $type = $f.'System.WorkItemType'
+    $state = $f.'System.State'
+    $tags = $f.'System.Tags'
+    $desc = $f.'System.Description' # HTML bruto
+
+    $fileName = "{0} - {1}.md" -f $id, ($title -replace '[\\/:*?"<>|]', ' ')
+    $folder = Join-Path $OutDir ($type -replace ' ','_')
+    New-Item -ItemType Directory -Force -Path $folder | Out-Null
+    $path = Join-Path $folder $fileName
+
+    $yaml = @(
+      "---",
+      "id: `"$("WI-$id")`"",
+      "title: `"$title`"",
+      "type: `"$type`"",
+      "state: `"$state`"",
+      "tags: `"$($tags -replace ':',' - ')`"",
+      "---"
+    ) -join "`n"
+
+    $md = @"
+$yaml
+
+# WI-$id - $title
+
+## 2. Contexto
+- **Descrição Resumida:**
+$desc
+
+"@
+    $md | Out-File -FilePath $path -Encoding utf8
+  }
+}

@@ -1,0 +1,1 @@
+python ado_export_to_obsidian.py --types "User Story,Bug" --area "Yduqs\\Atendimento%" --since 2025-01-01 --out "C:\obsidian\YDUQS\ADO" --git
